@@ -91,6 +91,7 @@ class User extends AbstractEntity
         'calendar.delete-single-bookings' => 'Can delete single bookings',
         'calendar.create-subscription-bookings' => 'Can create recurring bookings',
         'calendar.cancel-subscription-bookings' => 'Can cancel recurring bookings',
+        'calendar.cancel-subscription-reservations' => 'Can cancel events of recurring bookings',
         'calendar.delete-subscription-bookings' => 'Can delete recurring bookings',
     );
 

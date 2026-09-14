@@ -434,7 +434,7 @@ class SquareValidator extends AbstractService
     public function isReservationCancellable(Booking $booking)
     {
         return $this->user &&
-            $this->user->can('calendar.cancel-subscription-bookings') &&
+            ($this->user->can('calendar.cancel-subscription-bookings') || $this->user->can('calendar.cancel-subscription-reservations')) &&
             $booking->need('status') == 'subscription';
     }
 

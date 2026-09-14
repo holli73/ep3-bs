@@ -96,6 +96,7 @@ return [
     'Can delete single bookings' => 'Kann Einzelbuchungen löschen',
     'Can create recurring bookings' => 'Kann Abos erstellen',
     'Can cancel recurring bookings' => 'Kann Abos stornieren',
+    'Can cancel events of recurring bookings' => 'Kann Abo-Reservierungen stornieren',
     'Can delete recurring bookings' => 'Kann Abos löschen',
 
     'Request activation mail' => 'Aktivierungs E-Mail senden',

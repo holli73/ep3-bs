@@ -203,6 +203,200 @@ return array(
                             ),
                         ),
                     ),
+                    'tournament' => array(
+                        'type' => 'Literal',
+                        'options' => array(
+                            'route' => '/tournament',
+                            'defaults' => array(
+                                'controller' => 'Backend\Controller\Tournament',
+                                'action' => 'index',
+                            ),
+                        ),
+                        'may_terminate' => true,
+                        'child_routes' => array(
+                            'edit' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/edit[/:tid]',
+                                    'defaults' => array(
+                                        'action' => 'edit',
+                                    ),
+                                    'constraints' => array(
+                                        'tid' => '[0-9]+',
+                                    ),
+                                ),
+                            ),
+                            'delete' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/delete/:tid',
+                                    'defaults' => array(
+                                        'action' => 'delete',
+                                    ),
+                                    'constraints' => array(
+                                        'tid' => '[0-9]+',
+                                    ),
+                                ),
+                            ),
+                            'participants' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/participants/:tcid',
+                                    'defaults' => array(
+                                        'controller' => 'Backend\Controller\TournamentParticipant',
+                                        'action' => 'index',
+                                    ),
+                                    'constraints' => array(
+                                        'tcid' => '[0-9]+',
+                                    ),
+                                ),
+                                'may_terminate' => true,
+                                'child_routes' => array(
+                                    'add' => array(
+                                        'type' => 'Literal',
+                                        'options' => array(
+                                            'route' => '/add',
+                                            'defaults' => array(
+                                                'action' => 'add',
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            'participants-remove' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/participants/remove/:tpid',
+                                    'defaults' => array(
+                                        'controller' => 'Backend\Controller\TournamentParticipant',
+                                        'action' => 'remove',
+                                    ),
+                                    'constraints' => array(
+                                        'tpid' => '[0-9]+',
+                                    ),
+                                ),
+                            ),
+                            'matches' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/matches/:tcid',
+                                    'defaults' => array(
+                                        'controller' => 'Backend\Controller\TournamentMatch',
+                                        'action' => 'index',
+                                    ),
+                                    'constraints' => array(
+                                        'tcid' => '[0-9]+',
+                                    ),
+                                ),
+                                'may_terminate' => true,
+                                'child_routes' => array(
+                                    'generate' => array(
+                                        'type' => 'Literal',
+                                        'options' => array(
+                                            'route' => '/generate',
+                                            'defaults' => array(
+                                                'action' => 'generate',
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            'matches-result' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/matches/result/:tmaid',
+                                    'defaults' => array(
+                                        'controller' => 'Backend\Controller\TournamentMatch',
+                                        'action' => 'result',
+                                    ),
+                                    'constraints' => array(
+                                        'tmaid' => '[0-9]+',
+                                    ),
+                                ),
+                            ),
+                            'matches-reset' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/matches/reset/:tmaid',
+                                    'defaults' => array(
+                                        'controller' => 'Backend\Controller\TournamentMatch',
+                                        'action' => 'reset',
+                                    ),
+                                    'constraints' => array(
+                                        'tmaid' => '[0-9]+',
+                                    ),
+                                ),
+                            ),
+                            'knockout' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/knockout/:tcid',
+                                    'defaults' => array(
+                                        'controller' => 'Backend\Controller\TournamentMatch',
+                                        'action' => 'knockout',
+                                    ),
+                                    'constraints' => array(
+                                        'tcid' => '[0-9]+',
+                                    ),
+                                ),
+                                'may_terminate' => true,
+                                'child_routes' => array(
+                                    'generate' => array(
+                                        'type' => 'Literal',
+                                        'options' => array(
+                                            'route' => '/generate',
+                                            'defaults' => array(
+                                                'action' => 'generateKnockout',
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            'draw' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/draw/:tcid',
+                                    'defaults' => array(
+                                        'controller' => 'Backend\Controller\TournamentDraw',
+                                        'action' => 'index',
+                                    ),
+                                    'constraints' => array(
+                                        'tcid' => '[0-9]+',
+                                    ),
+                                ),
+                                'may_terminate' => true,
+                                'child_routes' => array(
+                                    'assign' => array(
+                                        'type' => 'Literal',
+                                        'options' => array(
+                                            'route' => '/assign',
+                                            'defaults' => array(
+                                                'action' => 'assign',
+                                            ),
+                                        ),
+                                    ),
+                                    'unassign' => array(
+                                        'type' => 'Literal',
+                                        'options' => array(
+                                            'route' => '/unassign',
+                                            'defaults' => array(
+                                                'action' => 'unassign',
+                                            ),
+                                        ),
+                                    ),
+                                    'run' => array(
+                                        'type' => 'Literal',
+                                        'options' => array(
+                                            'route' => '/run',
+                                            'defaults' => array(
+                                                'action' => 'run',
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
                     'config' => array(
                         'type' => 'Literal',
                         'options' => array(
@@ -396,6 +590,10 @@ return array(
             'Backend\Controller\User' => 'Backend\Controller\UserController',
             'Backend\Controller\Booking' => 'Backend\Controller\BookingController',
             'Backend\Controller\Event' => 'Backend\Controller\EventController',
+            'Backend\Controller\Tournament' => 'Backend\Controller\TournamentController',
+            'Backend\Controller\TournamentParticipant' => 'Backend\Controller\TournamentParticipantController',
+            'Backend\Controller\TournamentDraw' => 'Backend\Controller\TournamentDrawController',
+            'Backend\Controller\TournamentMatch' => 'Backend\Controller\TournamentMatchController',
             'Backend\Controller\Config' => 'Backend\Controller\ConfigController',
             'Backend\Controller\ConfigSquare' => 'Backend\Controller\ConfigSquareController',
         ),
@@ -426,6 +624,10 @@ return array(
             'Backend\Form\Booking\EditForm' => 'Backend\Form\Booking\EditFormFactory',
 
             'Backend\Form\Event\EditForm' => 'Backend\Form\Event\EditFormFactory',
+
+            'Backend\Form\Tournament\EditForm' => 'Backend\Form\Tournament\EditFormFactory',
+            'Backend\Form\Tournament\ParticipantForm' => 'Backend\Form\Tournament\ParticipantFormFactory',
+            'Backend\Form\Tournament\MatchResultForm' => 'Backend\Form\Tournament\MatchResultFormFactory',
 
             'Backend\Form\ConfigSquare\EditProductForm' => 'Backend\Form\ConfigSquare\EditProductFormFactory',
 

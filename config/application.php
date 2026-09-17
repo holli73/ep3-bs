@@ -34,6 +34,7 @@ return [
         'Frontend',
         'Service',
         'Square',
+        'Tournament',
         'User',
 
         /**

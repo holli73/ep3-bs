@@ -1,0 +1,51 @@
+<?php
+
+$tcid = $this->category->need('tcid');
+
+$this->setup(array(
+    'title' => 'Tournament-Administration',
+    'panel' => 'centered-panel large-sized',
+    'back' => array(
+        'Tournament-Administration' => $this->url('backend/tournament/edit', ['tid' => $this->tournament->need('tid')]),
+    ),
+));
+
+?>
+
+<div>
+    <h1><?= $this->escapeHtml($this->tournament->getMeta('name', '-')) ?> &middot; <?= $this->t($this->category->getGender()) ?></h1>
+
+    <div class="separator-small"></div>
+
+    <p><a href="<?= $this->url('backend/tournament/participants/add', ['tcid' => $tcid]) ?>" class="unlined gray"><span class="symbolic symbolic-plus"><?= $this->t('Add participant') ?></span></a></p>
+
+    <div class="separator separator-line"></div>
+
+    <?php if ($this->participants): ?>
+
+        <table class="default-table">
+            <tr>
+                <th><?= $this->t('User') ?></th>
+                <th><?= $this->t('Status') ?></th>
+                <th><?= $this->t('Registered via') ?></th>
+                <th></th>
+            </tr>
+
+            <?php foreach ($this->participants as $participant): ?>
+                <?php $user = $this->users[$participant->need('tpid')] ?? null; ?>
+                <tr>
+                    <td><?= $user ? $this->escapeHtml($user->get('alias') . ' (' . $user->get('email') . ')') : $this->t('Unknown user') ?></td>
+                    <td><?= $this->t($participant->getStatus()) ?></td>
+                    <td><?= $this->escapeHtml($participant->need('registered_via')) ?></td>
+                    <td><a href="<?= $this->url('backend/tournament/participants-remove', ['tpid' => $participant->need('tpid')]) ?>"><?= $this->t('Remove') ?></a></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+
+    <?php else: ?>
+
+        <p><?= $this->t('No participants have been registered yet.') ?></p>
+
+    <?php endif; ?>
+
+</div>

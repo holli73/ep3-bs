@@ -1,0 +1,80 @@
+<?php
+
+$this->setup(array(
+    'title' => 'Bracket',
+    'panel' => 'centered-panel large-sized',
+    'back' => array(
+        'Tournament' => $this->url('tournament/view', ['tid' => $this->tournament->need('tid')]),
+    ),
+));
+
+$playerName = function ($match, $property) {
+    $tpid = $match->get($property);
+
+    if (! $tpid) {
+        return $this->t('TBD');
+    }
+
+    $user = $this->users[$tpid] ?? null;
+    $name = $this->escapeHtml($user ? $user->get('alias') : $this->t('Unknown user'));
+
+    if ($match->get('winner_tpid') == $tpid) {
+        $name = '<b>' . $name . '</b>';
+    }
+
+    return $name;
+};
+
+?>
+
+<div>
+    <h1><?= $this->escapeHtml($this->tournament->getMeta('name', $this->t('Tournament'))) ?> &middot; <?= $this->t($this->category->getGender()) ?> &middot; <?= $this->t('Bracket') ?></h1>
+
+    <div class="separator-small"></div>
+
+    <?php if (empty($this->matchesByRound['final'])): ?>
+
+        <p><?= $this->t('The knockout bracket has not been generated yet.') ?></p>
+
+    <?php else: ?>
+
+        <table class="default-table" style="width: 100%;">
+            <tr>
+                <th style="width: 40%;"><?= $this->t('Quarterfinal') ?></th>
+                <th style="width: 30%;"><?= $this->t('Semifinal') ?></th>
+                <th style="width: 30%;"><?= $this->t('Final') ?></th>
+            </tr>
+            <tr>
+                <td style="vertical-align: top;">
+                    <?php foreach ($this->matchesByRound['qf'] as $match): ?>
+                        <div style="margin-bottom: 12px;">
+                            <?= $playerName($match, 'player_a_tpid') ?>
+                            <br>
+                            <?= $playerName($match, 'player_b_tpid') ?>
+                        </div>
+                    <?php endforeach; ?>
+                </td>
+                <td style="vertical-align: top;">
+                    <?php foreach ($this->matchesByRound['sf'] as $match): ?>
+                        <div style="margin-bottom: 24px;">
+                            <?= $playerName($match, 'player_a_tpid') ?>
+                            <br>
+                            <?= $playerName($match, 'player_b_tpid') ?>
+                        </div>
+                    <?php endforeach; ?>
+                </td>
+                <td style="vertical-align: top;">
+                    <?php foreach ($this->matchesByRound['final'] as $match): ?>
+                        <div style="margin-bottom: 12px;">
+                            <?= $playerName($match, 'player_a_tpid') ?>
+                            <br>
+                            <?= $playerName($match, 'player_b_tpid') ?>
+                        </div>
+                    <?php endforeach; ?>
+                </td>
+            </tr>
+        </table>
+
+    <?php endif; ?>
+
+</div>

@@ -258,6 +258,201 @@ CREATE TABLE IF NOT EXISTS `bs_squares_products` (
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `bs_tournaments`
+--
+
+CREATE TABLE IF NOT EXISTS `bs_tournaments` (
+  `tid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `status` varchar(64) NOT NULL DEFAULT 'draft' COMMENT 'draft|registration-open|registration-closed|group-phase|knockout-phase|completed|cancelled',
+  `date_start` date NOT NULL,
+  `date_end` date NOT NULL,
+  `registration_deadline` datetime DEFAULT NULL,
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`tid`),
+  KEY `status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `bs_tournaments_meta`
+--
+
+CREATE TABLE IF NOT EXISTS `bs_tournaments_meta` (
+  `tmid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tid` int(10) unsigned NOT NULL,
+  `key` varchar(64) NOT NULL,
+  `value` text NOT NULL,
+  `locale` varchar(8) DEFAULT NULL,
+  PRIMARY KEY (`tmid`),
+  KEY `tid` (`tid`),
+  KEY `key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `bs_tournament_categories`
+--
+
+CREATE TABLE IF NOT EXISTS `bs_tournament_categories` (
+  `tcid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tid` int(10) unsigned NOT NULL,
+  `gender` varchar(16) NOT NULL COMMENT 'male|female',
+  `status` varchar(64) NOT NULL DEFAULT 'registration-open' COMMENT 'registration-open|registration-closed|group-phase|knockout-phase|completed',
+  `group_size` tinyint(3) unsigned NOT NULL DEFAULT 4,
+  `registration_deadline` datetime DEFAULT NULL COMMENT 'overrides tournament-level deadline if set',
+  PRIMARY KEY (`tcid`),
+  UNIQUE KEY `tid_gender` (`tid`,`gender`),
+  KEY `tid` (`tid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `bs_tournament_categories_meta`
+--
+
+CREATE TABLE IF NOT EXISTS `bs_tournament_categories_meta` (
+  `tcmid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tcid` int(10) unsigned NOT NULL,
+  `key` varchar(64) NOT NULL,
+  `value` text NOT NULL,
+  PRIMARY KEY (`tcmid`),
+  KEY `tcid` (`tcid`),
+  KEY `key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `bs_tournament_participants`
+--
+
+CREATE TABLE IF NOT EXISTS `bs_tournament_participants` (
+  `tpid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tcid` int(10) unsigned NOT NULL,
+  `uid` int(10) unsigned NOT NULL,
+  `status` varchar(64) NOT NULL DEFAULT 'registered' COMMENT 'registered|withdrawn|disqualified',
+  `registered_via` varchar(16) NOT NULL DEFAULT 'self' COMMENT 'self|admin',
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`tpid`),
+  UNIQUE KEY `tcid_uid` (`tcid`,`uid`),
+  KEY `uid` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `bs_tournament_participants_meta`
+--
+
+CREATE TABLE IF NOT EXISTS `bs_tournament_participants_meta` (
+  `tpmid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tpid` int(10) unsigned NOT NULL,
+  `key` varchar(64) NOT NULL,
+  `value` text NOT NULL,
+  PRIMARY KEY (`tpmid`),
+  KEY `tpid` (`tpid`),
+  KEY `key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `bs_tournament_groups`
+--
+
+CREATE TABLE IF NOT EXISTS `bs_tournament_groups` (
+  `tgid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tcid` int(10) unsigned NOT NULL,
+  `label` varchar(32) NOT NULL COMMENT 'e.g. Group A',
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`tgid`),
+  KEY `tcid` (`tcid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `bs_tournament_group_participants`
+--
+
+CREATE TABLE IF NOT EXISTS `bs_tournament_group_participants` (
+  `tgpid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tgid` int(10) unsigned NOT NULL,
+  `tpid` int(10) unsigned NOT NULL,
+  `locked` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'true if manually pinned by admin, draw will not move it',
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`tgpid`),
+  UNIQUE KEY `tpid` (`tpid`),
+  KEY `tgid` (`tgid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `bs_tournament_matches`
+--
+
+CREATE TABLE IF NOT EXISTS `bs_tournament_matches` (
+  `tmaid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tcid` int(10) unsigned NOT NULL,
+  `phase` varchar(16) NOT NULL COMMENT 'group|knockout',
+  `tgid` int(10) unsigned DEFAULT NULL COMMENT 'set for phase=group only',
+  `round` varchar(16) DEFAULT NULL COMMENT 'qf|sf|final, set for phase=knockout only',
+  `bracket_slot` tinyint(3) unsigned DEFAULT NULL COMMENT 'position within round, used for seeding/feed wiring',
+  `player_a_tpid` int(10) unsigned DEFAULT NULL,
+  `player_b_tpid` int(10) unsigned DEFAULT NULL COMMENT 'nullable: bye, or knockout slot not yet fed',
+  `winner_tpid` int(10) unsigned DEFAULT NULL,
+  `status` varchar(16) NOT NULL DEFAULT 'scheduled' COMMENT 'scheduled|completed|walkover|cancelled',
+  `feeds_into_tmaid` int(10) unsigned DEFAULT NULL COMMENT 'self-FK: knockout match the winner advances into',
+  `feeds_into_slot` varchar(1) DEFAULT NULL COMMENT 'A or B',
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`tmaid`),
+  KEY `tcid` (`tcid`),
+  KEY `tgid` (`tgid`),
+  KEY `phase` (`phase`),
+  KEY `feeds_into_tmaid` (`feeds_into_tmaid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `bs_tournament_matches_meta`
+--
+
+CREATE TABLE IF NOT EXISTS `bs_tournament_matches_meta` (
+  `tmamid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tmaid` int(10) unsigned NOT NULL,
+  `key` varchar(64) NOT NULL,
+  `value` text NOT NULL,
+  PRIMARY KEY (`tmamid`),
+  KEY `tmaid` (`tmaid`),
+  KEY `key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `bs_tournament_match_sets`
+--
+
+CREATE TABLE IF NOT EXISTS `bs_tournament_match_sets` (
+  `tmsid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tmaid` int(10) unsigned NOT NULL,
+  `set_number` tinyint(3) unsigned NOT NULL,
+  `games_a` tinyint(3) unsigned NOT NULL,
+  `games_b` tinyint(3) unsigned NOT NULL,
+  `is_match_tiebreak` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`tmsid`),
+  UNIQUE KEY `tmaid_set_number` (`tmaid`,`set_number`),
+  KEY `tmaid` (`tmaid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `bs_users`
 --
 
@@ -369,3 +564,70 @@ ALTER TABLE `bs_squares_products`
 --
 ALTER TABLE `bs_users_meta`
   ADD CONSTRAINT `bs_users_meta_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `bs_users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints der Tabelle `bs_tournaments_meta`
+--
+ALTER TABLE `bs_tournaments_meta`
+  ADD CONSTRAINT `bs_tournaments_meta_ibfk_1` FOREIGN KEY (`tid`) REFERENCES `bs_tournaments` (`tid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints der Tabelle `bs_tournament_categories`
+--
+ALTER TABLE `bs_tournament_categories`
+  ADD CONSTRAINT `bs_tournament_categories_ibfk_1` FOREIGN KEY (`tid`) REFERENCES `bs_tournaments` (`tid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints der Tabelle `bs_tournament_categories_meta`
+--
+ALTER TABLE `bs_tournament_categories_meta`
+  ADD CONSTRAINT `bs_tournament_categories_meta_ibfk_1` FOREIGN KEY (`tcid`) REFERENCES `bs_tournament_categories` (`tcid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints der Tabelle `bs_tournament_participants`
+--
+ALTER TABLE `bs_tournament_participants`
+  ADD CONSTRAINT `bs_tournament_participants_ibfk_1` FOREIGN KEY (`tcid`) REFERENCES `bs_tournament_categories` (`tcid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `bs_tournament_participants_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `bs_users` (`uid`);
+
+--
+-- Constraints der Tabelle `bs_tournament_participants_meta`
+--
+ALTER TABLE `bs_tournament_participants_meta`
+  ADD CONSTRAINT `bs_tournament_participants_meta_ibfk_1` FOREIGN KEY (`tpid`) REFERENCES `bs_tournament_participants` (`tpid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints der Tabelle `bs_tournament_groups`
+--
+ALTER TABLE `bs_tournament_groups`
+  ADD CONSTRAINT `bs_tournament_groups_ibfk_1` FOREIGN KEY (`tcid`) REFERENCES `bs_tournament_categories` (`tcid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints der Tabelle `bs_tournament_group_participants`
+--
+ALTER TABLE `bs_tournament_group_participants`
+  ADD CONSTRAINT `bs_tournament_group_participants_ibfk_1` FOREIGN KEY (`tgid`) REFERENCES `bs_tournament_groups` (`tgid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `bs_tournament_group_participants_ibfk_2` FOREIGN KEY (`tpid`) REFERENCES `bs_tournament_participants` (`tpid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints der Tabelle `bs_tournament_matches`
+--
+ALTER TABLE `bs_tournament_matches`
+  ADD CONSTRAINT `bs_tournament_matches_ibfk_1` FOREIGN KEY (`tcid`) REFERENCES `bs_tournament_categories` (`tcid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `bs_tournament_matches_ibfk_2` FOREIGN KEY (`tgid`) REFERENCES `bs_tournament_groups` (`tgid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `bs_tournament_matches_ibfk_3` FOREIGN KEY (`player_a_tpid`) REFERENCES `bs_tournament_participants` (`tpid`),
+  ADD CONSTRAINT `bs_tournament_matches_ibfk_4` FOREIGN KEY (`player_b_tpid`) REFERENCES `bs_tournament_participants` (`tpid`),
+  ADD CONSTRAINT `bs_tournament_matches_ibfk_5` FOREIGN KEY (`winner_tpid`) REFERENCES `bs_tournament_participants` (`tpid`),
+  ADD CONSTRAINT `bs_tournament_matches_ibfk_6` FOREIGN KEY (`feeds_into_tmaid`) REFERENCES `bs_tournament_matches` (`tmaid`) ON DELETE SET NULL;
+
+--
+-- Constraints der Tabelle `bs_tournament_matches_meta`
+--
+ALTER TABLE `bs_tournament_matches_meta`
+  ADD CONSTRAINT `bs_tournament_matches_meta_ibfk_1` FOREIGN KEY (`tmaid`) REFERENCES `bs_tournament_matches` (`tmaid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints der Tabelle `bs_tournament_match_sets`
+--
+ALTER TABLE `bs_tournament_match_sets`
+  ADD CONSTRAINT `bs_tournament_match_sets_ibfk_1` FOREIGN KEY (`tmaid`) REFERENCES `bs_tournament_matches` (`tmaid`) ON DELETE CASCADE ON UPDATE CASCADE;

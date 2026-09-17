@@ -143,6 +143,7 @@ class UserController extends AbstractActionController
                 /* Personal data */
 
                 $user->setMeta('gender', $eud['euf-gender']);
+                $user->setMeta('tournament.itn', $eud['euf-itn']);
 
                 switch ($eud['euf-gender']) {
                     case 'family':
@@ -189,6 +190,7 @@ class UserController extends AbstractActionController
                     'euf-email' => $user->get('email'),
                     'euf-max-active-bookings' => $user->getMeta('max_active_bookings'),
                     'euf-gender' => $user->getMeta('gender'),
+                    'euf-itn' => $user->getMeta('tournament.itn'),
                     'euf-firstname' => $user->getMeta('firstname', $user->getMeta('name')),
                     'euf-lastname' => $user->getMeta('lastname'),
                     'euf-street' => $user->getMeta('street'),
@@ -256,7 +258,7 @@ class UserController extends AbstractActionController
 
     public function interpretAction()
     {
-        $this->authorize('admin.user, admin.booking, calendar.see-data');
+        $this->authorize('admin.user, admin.booking, admin.tournament, calendar.see-data');
 
         $serviceManager = @$this->getServiceLocator();
         $userManager = $serviceManager->get('User\Manager\UserManager');

@@ -87,6 +87,7 @@ return [
     'Can manage users' => 'Peut gérer les utilisateurs',
     'Can manage bookings' => 'Peut gérer les réservations',
     'Can manage events' => 'Peut gérer les événements',
+    'Can manage tournaments' => 'Peut gérer les tournois',
     'Can change configuration' => 'Peut changer la configuration',
     'Sees the admin menu' => 'Peut voir le menu admin',
     'Sees past bookings' => 'Peut voir le passé dans calendrier',

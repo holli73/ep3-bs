@@ -1,0 +1,86 @@
+<?php
+
+$this->setup(array(
+    'title' => 'Tournament',
+    'panel' => 'centered-panel large-sized',
+    'back' => array(
+        'Tournaments' => $this->url('tournament'),
+    ),
+));
+
+?>
+
+<div>
+    <h1><?= $this->escapeHtml($this->tournament->getMeta('name', $this->t('Tournament'))) ?></h1>
+
+    <div class="separator-small"></div>
+
+    <?php if ($this->tournament->getMeta('description')): ?>
+        <p><?= nl2br($this->escapeHtml($this->tournament->getMeta('description'))) ?></p>
+
+        <div class="separator-small"></div>
+    <?php endif; ?>
+
+    <p>
+        <?= $this->dateFormat(new \DateTime($this->tournament->need('date_start')), \IntlDateFormatter::MEDIUM) ?>
+        &ndash;
+        <?= $this->dateFormat(new \DateTime($this->tournament->need('date_end')), \IntlDateFormatter::MEDIUM) ?>
+    </p>
+
+    <div class="separator separator-line"></div>
+
+    <?php foreach ($this->categories as $gender => $category): ?>
+
+        <h2><?= $this->t($category->getGender()) ?></h2>
+
+        <p>
+            <?= $this->t('Status') ?>: <?= $this->t($category->getStatus()) ?>
+            &nbsp;&middot;&nbsp;
+            <?= sprintf($this->t('%d registered'), $this->participantCounts[$gender] ?? 0) ?>
+            &nbsp;&middot;&nbsp;
+            <a href="<?= $this->url('tournament/standings', ['tcid' => $category->need('tcid')]) ?>"><?= $this->t('Standings') ?></a>
+            &nbsp;&middot;&nbsp;
+            <a href="<?= $this->url('tournament/bracket', ['tcid' => $category->need('tcid')]) ?>"><?= $this->t('Bracket') ?></a>
+        </p>
+
+        <?php
+
+        $ownParticipant = $this->ownParticipants[$gender] ?? null;
+
+        ?>
+
+        <?php if (! $this->user): ?>
+
+            <p>
+                <a href="<?= $this->url('user/login') ?>" class="default-button"><?= $this->t('Login to register') ?></a>
+            </p>
+
+        <?php elseif ($ownParticipant && $ownParticipant->need('status') == 'registered'): ?>
+
+            <p class="green"><?= $this->t('You are registered for this category') ?></p>
+
+            <form method="post" action="<?= $this->url('tournament/withdraw', ['tpid' => $ownParticipant->need('tpid')]) ?>">
+                <button type="submit" class="default-button"><?= $this->t('Withdraw') ?></button>
+            </form>
+
+        <?php elseif ($ownParticipant && $ownParticipant->need('status') == 'disqualified'): ?>
+
+            <p class="red"><?= $this->t('You are disqualified from this category') ?></p>
+
+        <?php elseif ($category->need('status') == 'registration-open'): ?>
+
+            <form method="post" action="<?= $this->url('tournament/register', ['tcid' => $category->need('tcid')]) ?>">
+                <button type="submit" class="default-button"><?= $this->t('Register') ?></button>
+            </form>
+
+        <?php else: ?>
+
+            <p class="gray"><?= $this->t('Registration is not open for this category') ?></p>
+
+        <?php endif; ?>
+
+        <div class="separator separator-line"></div>
+
+    <?php endforeach; ?>
+
+</div>

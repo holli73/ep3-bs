@@ -1,0 +1,77 @@
+<?php
+
+$tcid = $this->category->need('tcid');
+
+$this->setup(array(
+    'title' => 'Tournament-Administration',
+    'panel' => 'centered-panel large-sized',
+    'back' => array(
+        'Tournament-Administration' => $this->url('backend/tournament/edit', ['tid' => $this->tournament->need('tid')]),
+    ),
+));
+
+?>
+
+<div>
+    <h1><?= $this->escapeHtml($this->tournament->getMeta('name', '-')) ?> &middot; <?= $this->t($this->category->getGender()) ?> &middot; <?= $this->t('Matches') ?></h1>
+
+    <div class="separator-small"></div>
+
+    <form method="post" action="<?= $this->url('backend/tournament/matches/generate', ['tcid' => $tcid]) ?>">
+        <button type="submit" class="default-button"><?= $this->t('Generate group matches') ?></button>
+    </form>
+
+    <p class="gray"><?= $this->t('Safe to click any time — it only fills in missing or out-of-date fixtures, and never touches a group that already has recorded results.') ?></p>
+
+    <div class="separator separator-line"></div>
+
+    <?php foreach ($this->groups as $group): ?>
+
+        <?php $tgid = $group->need('tgid'); ?>
+
+        <h2><?= $this->escapeHtml($group->need('label')) ?></h2>
+
+        <?php $matches = $this->matchesByGroup[$tgid] ?? []; ?>
+
+        <?php if ($matches): ?>
+
+            <table class="default-table">
+                <tr>
+                    <th><?= $this->t('Player A') ?></th>
+                    <th><?= $this->t('Player B') ?></th>
+                    <th><?= $this->t('Status') ?></th>
+                    <th><?= $this->t('Score') ?></th>
+                    <th></th>
+                </tr>
+
+                <?php foreach ($matches as $match): ?>
+                    <?php
+                    $userA = $this->users[$match->get('player_a_tpid')] ?? null;
+                    $userB = $this->users[$match->get('player_b_tpid')] ?? null;
+                    $score = $this->scoresByMatch[$match->need('tmaid')] ?? '';
+                    ?>
+                    <tr>
+                        <td><?= $userA ? $this->escapeHtml($userA->get('alias')) : $this->t('Unknown user') ?></td>
+                        <td><?= $userB ? $this->escapeHtml($userB->get('alias')) : $this->t('Unknown user') ?></td>
+                        <td><?= $this->t($match->getStatus()) ?></td>
+                        <td><?= $this->escapeHtml($score) ?></td>
+                        <td>
+                            <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
+                                <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+
+        <?php else: ?>
+
+            <p class="gray"><?= $this->t('No matches yet.') ?></p>
+
+        <?php endif; ?>
+
+        <div class="separator separator-line"></div>
+
+    <?php endforeach; ?>
+
+</div>

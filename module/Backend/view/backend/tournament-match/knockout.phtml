@@ -1,0 +1,96 @@
+<?php
+
+$tcid = $this->category->need('tcid');
+
+$this->setup(array(
+    'title' => 'Tournament-Administration',
+    'panel' => 'centered-panel large-sized',
+    'back' => array(
+        'Tournament-Administration' => $this->url('backend/tournament/edit', ['tid' => $this->tournament->need('tid')]),
+    ),
+));
+
+$playerName = function ($match, $property) {
+    $tpid = $match->get($property);
+
+    if (! $tpid) {
+        return $this->t('TBD');
+    }
+
+    $user = $this->users[$tpid] ?? null;
+    $name = $this->escapeHtml($user ? $user->get('alias') : $this->t('Unknown user'));
+
+    if ($match->get('winner_tpid') == $tpid) {
+        $name = '<b>' . $name . '</b>';
+    }
+
+    return $name;
+};
+
+?>
+
+<div>
+    <h1><?= $this->escapeHtml($this->tournament->getMeta('name', '-')) ?> &middot; <?= $this->t($this->category->getGender()) ?> &middot; <?= $this->t('Knockout') ?></h1>
+
+    <div class="separator-small"></div>
+
+    <?php if (empty($this->matchesByRound['final'])): ?>
+
+        <form method="post" action="<?= $this->url('backend/tournament/knockout/generate', ['tcid' => $tcid]) ?>">
+            <button type="submit" class="default-button"><?= $this->t('Generate knockout bracket') ?></button>
+        </form>
+
+    <?php else: ?>
+
+        <table class="default-table" style="width: 100%;">
+            <tr>
+                <th style="width: 40%;"><?= $this->t('Quarterfinal') ?></th>
+                <th style="width: 30%;"><?= $this->t('Semifinal') ?></th>
+                <th style="width: 30%;"><?= $this->t('Final') ?></th>
+            </tr>
+            <tr>
+                <td style="vertical-align: top;">
+                    <?php foreach ($this->matchesByRound['qf'] as $match): ?>
+                        <div style="margin-bottom: 12px;">
+                            <?= $playerName($match, 'player_a_tpid') ?>
+                            <br>
+                            <?= $playerName($match, 'player_b_tpid') ?>
+                            <br>
+                            <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
+                                <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                </td>
+                <td style="vertical-align: top;">
+                    <?php foreach ($this->matchesByRound['sf'] as $match): ?>
+                        <div style="margin-bottom: 24px;">
+                            <?= $playerName($match, 'player_a_tpid') ?>
+                            <br>
+                            <?= $playerName($match, 'player_b_tpid') ?>
+                            <br>
+                            <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
+                                <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                </td>
+                <td style="vertical-align: top;">
+                    <?php foreach ($this->matchesByRound['final'] as $match): ?>
+                        <div style="margin-bottom: 12px;">
+                            <?= $playerName($match, 'player_a_tpid') ?>
+                            <br>
+                            <?= $playerName($match, 'player_b_tpid') ?>
+                            <br>
+                            <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
+                                <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                </td>
+            </tr>
+        </table>
+
+    <?php endif; ?>
+
+</div>

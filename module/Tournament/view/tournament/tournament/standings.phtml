@@ -1,0 +1,57 @@
+<?php
+
+$this->setup(array(
+    'title' => 'Standings',
+    'panel' => 'centered-panel large-sized',
+    'back' => array(
+        'Tournament' => $this->url('tournament/view', ['tid' => $this->tournament->need('tid')]),
+    ),
+));
+
+?>
+
+<div>
+    <h1><?= $this->escapeHtml($this->tournament->getMeta('name', $this->t('Tournament'))) ?> &middot; <?= $this->t($this->category->getGender()) ?></h1>
+
+    <div class="separator-small"></div>
+
+    <?php if (empty($this->groups)): ?>
+
+        <p><?= $this->t('The draw has not been made yet.') ?></p>
+
+    <?php endif; ?>
+
+    <?php foreach ($this->groups as $group): ?>
+
+        <?php $tgid = $group->need('tgid'); ?>
+
+        <h2><?= $this->escapeHtml($group->need('label')) ?></h2>
+
+        <table class="default-table">
+            <tr>
+                <th>#</th>
+                <th><?= $this->t('Player') ?></th>
+                <th><?= $this->t('Wins') ?></th>
+                <th><?= $this->t('Losses') ?></th>
+                <th><?= $this->t('Sets') ?></th>
+                <th><?= $this->t('Games') ?></th>
+            </tr>
+
+            <?php foreach ($this->standingsByGroup[$tgid] ?? [] as $row): ?>
+                <?php $user = $this->users[$row['tpid']] ?? null; ?>
+                <tr>
+                    <td><?= $row['rank'] ?></td>
+                    <td><?= $user ? $this->escapeHtml($user->get('alias')) : $this->t('Unknown user') ?></td>
+                    <td><?= $row['wins'] ?></td>
+                    <td><?= $row['losses'] ?></td>
+                    <td><?= $row['setsWon'] ?>:<?= $row['setsLost'] ?></td>
+                    <td><?= $row['gamesWon'] ?>:<?= $row['gamesLost'] ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+
+        <div class="separator separator-line"></div>
+
+    <?php endforeach; ?>
+
+</div>

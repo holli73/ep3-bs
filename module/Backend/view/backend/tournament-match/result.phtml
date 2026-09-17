@@ -1,0 +1,81 @@
+<?php
+
+$tmaid = $this->match->need('tmaid');
+
+$this->setup(array(
+    'title' => 'Tournament-Administration',
+    'panel' => 'centered-panel',
+    'back' => array(
+        'Matches' => $this->url('backend/tournament/matches', ['tcid' => $this->match->need('tcid')]),
+    ),
+));
+
+?>
+
+<div>
+    <h1>
+        <?= $this->userA ? $this->escapeHtml($this->userA->get('alias')) : $this->t('Unknown user') ?>
+        <?= $this->t('vs') ?>
+        <?= $this->userB ? $this->escapeHtml($this->userB->get('alias')) : $this->t('Unknown user') ?>
+    </h1>
+
+    <div class="separator-small"></div>
+
+    <div class="padded">
+        <?php
+
+        $form = $this->resultForm;
+        $form->setAttribute('method', 'post');
+        $form->setAttribute('action', $this->url('backend/tournament/matches-result', ['tmaid' => $tmaid]));
+        $form->prepare();
+
+        ?>
+
+        <?= $this->form()->openTag($form) ?>
+
+        <table class="default-table">
+            <tr>
+                <td class="default-form-label-row"><?= $this->t('Set 1') ?></td>
+                <td>
+                    <?= $this->formElement($form->get('mrf-set1-a')) ?> : <?= $this->formElement($form->get('mrf-set1-b')) ?>
+                    <?= $this->formElementErrors($form->get('mrf-set1-a')) ?>
+                    <?= $this->formElementErrors($form->get('mrf-set1-b')) ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="default-form-label-row"><?= $this->t('Set 2') ?></td>
+                <td>
+                    <?= $this->formElement($form->get('mrf-set2-a')) ?> : <?= $this->formElement($form->get('mrf-set2-b')) ?>
+                    <?= $this->formElementErrors($form->get('mrf-set2-a')) ?>
+                    <?= $this->formElementErrors($form->get('mrf-set2-b')) ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="default-form-label-row"><?= $this->t('Set 3') ?></td>
+                <td>
+                    <?= $this->formElement($form->get('mrf-set3-a')) ?> : <?= $this->formElement($form->get('mrf-set3-b')) ?>
+                    <?= $this->formElementErrors($form->get('mrf-set3-a')) ?>
+                    <?= $this->formElementErrors($form->get('mrf-set3-b')) ?>
+                </td>
+            </tr>
+            <?= $this->formRowDefault($form, 'mrf-set3-tiebreak') ?>
+
+            <tr>
+                <td>&nbsp;</td>
+                <td>
+                    <?= $this->formElement($form->get('mrf-submit')) ?>
+
+                    <?php if ($this->match->need('status') == 'completed'): ?>
+                        <span class="gray" style="margin: 0 8px;"><?= $this->t('or') ?></span>
+
+                        <a href="<?= $this->url('backend/tournament/matches-reset', ['tmaid' => $tmaid]) ?>" class="default-button">
+                            <span class="symbolic symbolic-cross"><?= $this->t('Reset result') ?></span>
+                        </a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        </table>
+
+        <?= $this->form()->closeTag() ?>
+    </div>
+</div>

@@ -13,6 +13,7 @@ return [
     'There are no tournaments at the moment.' => 'Es gibt derzeit keine Turniere.',
     'Status' => 'Status',
     'Name' => 'Name',
+    'View' => 'Ansehen',
     'Registration deadline' => 'Anmeldefrist',
     'Optional. Leave empty for no deadline.' => 'Optional. Leer lassen für keine Frist.',
     'Delete this tournament' => 'Turnier löschen',

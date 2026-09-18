@@ -831,3 +831,10 @@ option { padding-right: 16px; }
     padding-left: 16px;
     text-align: center;
 }
+
+/* .default-table's 16px padding-bottom per row is meant for looser,
+   multi-line content elsewhere in the app - on this dense stats table it
+   reads as a blank row between every player, so tighten it up. */
+.standings-table td {
+    padding-bottom: 4px;
+}

@@ -26,6 +26,9 @@ class TournamentController extends AbstractActionController
         $tournamentManager = $serviceManager->get('Tournament\Manager\TournamentManager');
         $tournamentCategoryManager = $serviceManager->get('Tournament\Manager\TournamentCategoryManager');
         $tournamentParticipantManager = $serviceManager->get('Tournament\Manager\TournamentParticipantManager');
+        $tournamentMatchManager = $serviceManager->get('Tournament\Manager\TournamentMatchManager');
+        $tournamentMatchSetManager = $serviceManager->get('Tournament\Manager\TournamentMatchSetManager');
+        $userManager = $serviceManager->get('User\Manager\UserManager');
         $userSessionManager = $serviceManager->get('User\Manager\UserSessionManager');
 
         $tid = $this->params()->fromRoute('tid');
@@ -37,12 +40,51 @@ class TournamentController extends AbstractActionController
 
         $participantCounts = array();
         $ownParticipants = array();
+        $ownMatches = array();
+        $matchUsers = array();
+        $matchScores = array();
 
         foreach ($categories as $gender => $category) {
             $participantCounts[$gender] = count($tournamentParticipantManager->getByCategory($category, 'registered'));
 
-            if ($user) {
-                $ownParticipants[$gender] = $tournamentParticipantManager->getByCategoryAndUser($category, $user->need('uid'));
+            if (! $user) {
+                continue;
+            }
+
+            $ownParticipant = $tournamentParticipantManager->getByCategoryAndUser($category, $user->need('uid'));
+            $ownParticipants[$gender] = $ownParticipant;
+
+            if (! ($ownParticipant && $ownParticipant->need('status') == 'registered')) {
+                continue;
+            }
+
+            $matches = $tournamentMatchManager->getByParticipant($ownParticipant);
+            $ownMatches[$gender] = $matches;
+
+            foreach ($matches as $match) {
+                foreach (array('player_a_tpid', 'player_b_tpid') as $property) {
+                    $tpid = $match->get($property);
+
+                    if ($tpid && ! isset($matchUsers[$tpid])) {
+                        $participant = $tournamentParticipantManager->get($tpid, false);
+
+                        if ($participant) {
+                            $matchUsers[$tpid] = $userManager->get($participant->need('uid'), false);
+                        }
+                    }
+                }
+
+                if ($match->need('status') == 'completed') {
+                    $sets = $tournamentMatchSetManager->getByMatch($match);
+
+                    $setStrings = array();
+
+                    foreach ($sets as $set) {
+                        $setStrings[] = $set->need('games_a') . '-' . $set->need('games_b') . ($set->get('is_match_tiebreak') ? '*' : '');
+                    }
+
+                    $matchScores[$match->need('tmaid')] = implode(', ', $setStrings);
+                }
             }
         }
 
@@ -51,6 +93,9 @@ class TournamentController extends AbstractActionController
             'categories' => $categories,
             'participantCounts' => $participantCounts,
             'ownParticipants' => $ownParticipants,
+            'ownMatches' => $ownMatches,
+            'matchUsers' => $matchUsers,
+            'matchScores' => $matchScores,
             'user' => $user,
         );
     }

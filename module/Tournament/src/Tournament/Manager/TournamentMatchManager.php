@@ -8,7 +8,9 @@ use RuntimeException;
 use Tournament\Entity\TournamentCategory;
 use Tournament\Entity\TournamentGroup;
 use Tournament\Entity\TournamentMatchFactory;
+use Tournament\Entity\TournamentParticipant;
 use Traversable;
+use Zend\Db\Sql\Where;
 
 class TournamentMatchManager extends AbstractEntityManager
 {
@@ -91,6 +93,24 @@ class TournamentMatchManager extends AbstractEntityManager
     public function getByGroup(TournamentGroup $group)
     {
         return $this->getBy(array('tgid' => $group->need('tgid'), 'phase' => 'group'), 'tmaid ASC');
+    }
+
+    /**
+     * Gets all matches (any phase) a participant plays in, either as player A or B.
+     *
+     * @param TournamentParticipant $participant
+     * @return array
+     */
+    public function getByParticipant(TournamentParticipant $participant)
+    {
+        $tpid = $participant->need('tpid');
+
+        $where = new Where();
+        $where->equalTo('player_a_tpid', $tpid);
+        $where->OR;
+        $where->equalTo('player_b_tpid', $tpid);
+
+        return $this->getBy($where, 'tmaid ASC');
     }
 
 }

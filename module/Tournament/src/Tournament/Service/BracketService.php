@@ -91,6 +91,38 @@ class BracketService extends AbstractService
     }
 
     /**
+     * Derives the winner from a set of set scores (whoever won more sets) and
+     * records the result. Shared by both the admin and self-service (player)
+     * result entry points, so the winner-derivation rule only lives in one place.
+     *
+     * @param TournamentMatch $match
+     * @param array $setsData           Each item: ['games_a' => int, 'games_b' => int, 'is_match_tiebreak' => bool]
+     * @return TournamentMatch
+     * @throws RuntimeException        If the set scores don't produce a clear winner.
+     */
+    public function recordResultFromSets(TournamentMatch $match, array $setsData)
+    {
+        $setsWonA = 0;
+        $setsWonB = 0;
+
+        foreach ($setsData as $set) {
+            if ($set['games_a'] > $set['games_b']) {
+                $setsWonA++;
+            } else if ($set['games_b'] > $set['games_a']) {
+                $setsWonB++;
+            }
+        }
+
+        if ($setsWonA == $setsWonB) {
+            throw new RuntimeException('The entered set scores do not produce a clear winner');
+        }
+
+        $winnerTpid = $setsWonA > $setsWonB ? $match->need('player_a_tpid') : $match->need('player_b_tpid');
+
+        return $this->recordResult($match, $setsData, $winnerTpid);
+    }
+
+    /**
      * Resets a match back to its pre-result state: removes its sets, clears
      * the winner and status, and — for a knockout match that already fed a
      * winner into the next round — also clears that slot in the next match,

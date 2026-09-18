@@ -267,27 +267,18 @@ class TournamentMatchController extends AbstractActionController
                     );
                 }
 
-                $setsWonA = 0;
-                $setsWonB = 0;
-
-                foreach ($setsData as $set) {
-                    if ($set['games_a'] > $set['games_b']) {
-                        $setsWonA++;
-                    } else if ($set['games_b'] > $set['games_a']) {
-                        $setsWonB++;
-                    }
-                }
-
-                if ($setsWonA == $setsWonB) {
-                    $this->flashMessenger()->addErrorMessage('The entered set scores do not produce a clear winner');
-                } else {
-                    $winnerTpid = $setsWonA > $setsWonB ? $match->need('player_a_tpid') : $match->need('player_b_tpid');
-
-                    $bracketService->recordResult($match, $setsData, $winnerTpid);
+                try {
+                    $bracketService->recordResultFromSets($match, $setsData);
 
                     $this->flashMessenger()->addSuccessMessage('The result has been saved');
 
+                    if ($match->need('phase') == 'knockout') {
+                        return $this->redirect()->toRoute('backend/tournament/knockout', array('tcid' => $match->need('tcid')));
+                    }
+
                     return $this->redirect()->toRoute('backend/tournament/matches', array('tcid' => $match->need('tcid')));
+                } catch (RuntimeException $e) {
+                    $this->flashMessenger()->addErrorMessage($e->getMessage());
                 }
             }
         } else {

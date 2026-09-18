@@ -76,6 +76,19 @@ return array(
                             ),
                         ),
                     ),
+                    'match-result' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => '/match/result/:tmaid',
+                            'defaults' => array(
+                                'controller' => 'Tournament\Controller\Match',
+                                'action' => 'result',
+                            ),
+                            'constraints' => array(
+                                'tmaid' => '[0-9]+',
+                            ),
+                        ),
+                    ),
                 ),
             ),
         ),
@@ -85,6 +98,13 @@ return array(
         'invokables' => array(
             'Tournament\Controller\Tournament' => 'Tournament\Controller\TournamentController',
             'Tournament\Controller\Registration' => 'Tournament\Controller\RegistrationController',
+            'Tournament\Controller\Match' => 'Tournament\Controller\MatchController',
+        ),
+    ),
+
+    'form_elements' => array(
+        'factories' => array(
+            'Tournament\Form\MatchResultForm' => 'Tournament\Form\MatchResultFormFactory',
         ),
     ),
 

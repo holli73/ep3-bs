@@ -807,5 +807,15 @@ option { padding-right: 16px; }
 }
 
 /* Lets a wide table scroll horizontally instead of breaking the page layout
-   or cutting off its last column, on any viewport too narrow for it. */
-.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+   or cutting off its last column, on any viewport too narrow for it.
+   width/max-width and overflow-y are both required, not just overflow-x -
+   without them mobile Safari in particular fails to actually clip the
+   table to this container and lets it spill out past the panel instead. */
+.table-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+}

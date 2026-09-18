@@ -73,19 +73,9 @@ class TournamentController extends AbstractActionController
                         }
                     }
                 }
-
-                if ($match->need('status') == 'completed') {
-                    $sets = $tournamentMatchSetManager->getByMatch($match);
-
-                    $setStrings = array();
-
-                    foreach ($sets as $set) {
-                        $setStrings[] = $set->need('games_a') . '-' . $set->need('games_b') . ($set->get('is_match_tiebreak') ? '*' : '');
-                    }
-
-                    $matchScores[$match->need('tmaid')] = implode(', ', $setStrings);
-                }
             }
+
+            $matchScores = array_merge($matchScores, $tournamentMatchSetManager->getScoreStringsByMatches($matches));
         }
 
         return array(
@@ -137,27 +127,13 @@ class TournamentController extends AbstractActionController
         foreach ($groups as $group) {
             $matches = $tournamentMatchManager->getByGroup($group);
 
-            $playedMatches = array();
-
-            foreach ($matches as $match) {
-                if ($match->need('status') != 'completed') {
-                    continue;
-                }
-
-                $playedMatches[] = $match;
-
-                $sets = $tournamentMatchSetManager->getByMatch($match);
-
-                $setStrings = array();
-
-                foreach ($sets as $set) {
-                    $setStrings[] = $set->need('games_a') . '-' . $set->need('games_b') . ($set->get('is_match_tiebreak') ? '*' : '');
-                }
-
-                $matchScores[$match->need('tmaid')] = implode(', ', $setStrings);
-            }
+            $playedMatches = array_values(array_filter($matches, function ($match) {
+                return $match->need('status') == 'completed';
+            }));
 
             $playedMatchesByGroup[$group->need('tgid')] = $playedMatches;
+
+            $matchScores = array_merge($matchScores, $tournamentMatchSetManager->getScoreStringsByMatches($playedMatches));
         }
 
         return array(
@@ -177,6 +153,7 @@ class TournamentController extends AbstractActionController
         $tournamentManager = $serviceManager->get('Tournament\Manager\TournamentManager');
         $tournamentCategoryManager = $serviceManager->get('Tournament\Manager\TournamentCategoryManager');
         $matchManager = $serviceManager->get('Tournament\Manager\TournamentMatchManager');
+        $matchSetManager = $serviceManager->get('Tournament\Manager\TournamentMatchSetManager');
         $participantManager = $serviceManager->get('Tournament\Manager\TournamentParticipantManager');
         $userManager = $serviceManager->get('User\Manager\UserManager');
 
@@ -216,11 +193,14 @@ class TournamentController extends AbstractActionController
             });
         }
 
+        $matchScores = $matchSetManager->getScoreStringsByMatches($matches);
+
         return array(
             'tournament' => $tournament,
             'category' => $category,
             'matchesByRound' => $matchesByRound,
             'users' => $users,
+            'matchScores' => $matchScores,
         );
     }
 

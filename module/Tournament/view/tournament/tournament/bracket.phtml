@@ -51,6 +51,9 @@ $playerName = function ($match, $property) {
                             <?= $playerName($match, 'player_a_tpid') ?>
                             <br>
                             <?= $playerName($match, 'player_b_tpid') ?>
+                            <?php if ($score = $this->matchScores[$match->need('tmaid')] ?? null): ?>
+                                <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </td>
@@ -60,6 +63,9 @@ $playerName = function ($match, $property) {
                             <?= $playerName($match, 'player_a_tpid') ?>
                             <br>
                             <?= $playerName($match, 'player_b_tpid') ?>
+                            <?php if ($score = $this->matchScores[$match->need('tmaid')] ?? null): ?>
+                                <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </td>
@@ -69,6 +75,9 @@ $playerName = function ($match, $property) {
                             <?= $playerName($match, 'player_a_tpid') ?>
                             <br>
                             <?= $playerName($match, 'player_b_tpid') ?>
+                            <?php if ($score = $this->matchScores[$match->need('tmaid')] ?? null): ?>
+                                <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </td>

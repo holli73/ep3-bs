@@ -55,6 +55,9 @@ $playerName = function ($match, $property) {
                             <?= $playerName($match, 'player_a_tpid') ?>
                             <br>
                             <?= $playerName($match, 'player_b_tpid') ?>
+                            <?php if ($score = $this->scoresByMatch[$match->need('tmaid')] ?? null): ?>
+                                <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
+                            <?php endif; ?>
                             <br>
                             <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
                                 <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
@@ -68,6 +71,9 @@ $playerName = function ($match, $property) {
                             <?= $playerName($match, 'player_a_tpid') ?>
                             <br>
                             <?= $playerName($match, 'player_b_tpid') ?>
+                            <?php if ($score = $this->scoresByMatch[$match->need('tmaid')] ?? null): ?>
+                                <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
+                            <?php endif; ?>
                             <br>
                             <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
                                 <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
@@ -81,6 +87,9 @@ $playerName = function ($match, $property) {
                             <?= $playerName($match, 'player_a_tpid') ?>
                             <br>
                             <?= $playerName($match, 'player_b_tpid') ?>
+                            <?php if ($score = $this->scoresByMatch[$match->need('tmaid')] ?? null): ?>
+                                <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
+                            <?php endif; ?>
                             <br>
                             <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
                                 <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>

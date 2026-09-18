@@ -145,6 +145,37 @@ class TournamentMatchSetManager extends AbstractManager
     }
 
     /**
+     * Builds a compact "6-4, 3-6, 10-8*" score string (a `*` marks a match
+     * tiebreak set) for each completed match in the given list, keyed by
+     * tmaid. Non-completed matches are skipped.
+     *
+     * @param array $matches
+     * @return array [tmaid => scoreString]
+     */
+    public function getScoreStringsByMatches(array $matches)
+    {
+        $scores = array();
+
+        foreach ($matches as $match) {
+            if ($match->need('status') != 'completed') {
+                continue;
+            }
+
+            $sets = $this->getByMatch($match);
+
+            $setStrings = array();
+
+            foreach ($sets as $set) {
+                $setStrings[] = $set->need('games_a') . '-' . $set->need('games_b') . ($set->get('is_match_tiebreak') ? '*' : '');
+            }
+
+            $scores[$match->need('tmaid')] = implode(', ', $setStrings);
+        }
+
+        return $scores;
+    }
+
+    /**
      * Replaces all of a match's sets with the passed set data in one operation
      * (delete-all-then-insert), since editing a result is always a full replace.
      *

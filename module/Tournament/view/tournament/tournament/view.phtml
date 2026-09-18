@@ -59,9 +59,11 @@ $this->setup(array(
 
             <p class="green"><?= $this->t('You are registered for this category') ?></p>
 
-            <form method="post" action="<?= $this->url('tournament/withdraw', ['tpid' => $ownParticipant->need('tpid')]) ?>">
-                <button type="submit" class="default-button"><?= $this->t('Withdraw') ?></button>
-            </form>
+            <?php if ($category->need('status') == 'registration-open'): ?>
+                <form method="post" action="<?= $this->url('tournament/withdraw', ['tpid' => $ownParticipant->need('tpid')]) ?>">
+                    <button type="submit" class="default-button"><?= $this->t('Withdraw') ?></button>
+                </form>
+            <?php endif; ?>
 
         <?php elseif ($ownParticipant && $ownParticipant->need('status') == 'disqualified'): ?>
 

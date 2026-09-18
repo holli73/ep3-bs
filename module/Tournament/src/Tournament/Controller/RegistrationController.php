@@ -66,9 +66,13 @@ class RegistrationController extends AbstractActionController
         }
 
         if ($this->getRequest()->isPost()) {
-            $registrationService->withdraw($participant);
+            try {
+                $registrationService->withdraw($participant, $category);
 
-            $this->flashMessenger()->addSuccessMessage('You have been withdrawn');
+                $this->flashMessenger()->addSuccessMessage('You have been withdrawn');
+            } catch (RuntimeException $e) {
+                $this->flashMessenger()->addErrorMessage($e->getMessage());
+            }
         }
 
         return $this->redirect()->toRoute('tournament/view', array('tid' => $category->need('tid')));

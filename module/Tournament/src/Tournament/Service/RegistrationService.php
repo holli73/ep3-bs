@@ -123,13 +123,21 @@ class RegistrationService extends AbstractService
      * Withdraws a participant's own registration (self-service).
      *
      * Keeps the row (as 'withdrawn') rather than deleting it, so a later re-registration
-     * reactivates it instead of violating the (tcid, uid) unique constraint.
+     * reactivates it instead of violating the (tcid, uid) unique constraint. Only allowed
+     * while registration is still open, mirroring registerSelf() - once it closes, groups
+     * or a draw may already depend on who's in the category.
      *
      * @param TournamentParticipant $participant
+     * @param TournamentCategory $category
      * @return TournamentParticipant
+     * @throws RuntimeException
      */
-    public function withdraw(TournamentParticipant $participant)
+    public function withdraw(TournamentParticipant $participant, TournamentCategory $category)
     {
+        if ($category->need('status') != 'registration-open') {
+            throw new RuntimeException('Registration is not open for this category');
+        }
+
         $participant->set('status', 'withdrawn');
 
         $this->participantManager->save($participant);

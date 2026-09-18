@@ -75,7 +75,7 @@ class TournamentController extends AbstractActionController
                 }
             }
 
-            $matchScores = array_merge($matchScores, $tournamentMatchSetManager->getScoreStringsByMatches($matches));
+            $matchScores = $matchScores + ($tournamentMatchSetManager->getScoreStringsByMatches($matches));
         }
 
         return array(
@@ -133,7 +133,7 @@ class TournamentController extends AbstractActionController
 
             $playedMatchesByGroup[$group->need('tgid')] = $playedMatches;
 
-            $matchScores = array_merge($matchScores, $tournamentMatchSetManager->getScoreStringsByMatches($playedMatches));
+            $matchScores = $matchScores + ($tournamentMatchSetManager->getScoreStringsByMatches($playedMatches));
         }
 
         return array(

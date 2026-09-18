@@ -50,7 +50,7 @@ class TournamentMatchController extends AbstractActionController
                 }
             }
 
-            $scoresByMatch = array_merge($scoresByMatch, $matchSetManager->getScoreStringsByMatches($matches));
+            $scoresByMatch = $scoresByMatch + ($matchSetManager->getScoreStringsByMatches($matches));
         }
 
         return array(

@@ -819,3 +819,11 @@ option { padding-right: 16px; }
     -webkit-overflow-scrolling: touch;
     box-sizing: border-box;
 }
+
+/* Standings table: give the stat columns (Wins/Losses/Sets/Games) a bit of
+   breathing room and center their values under the header. */
+.standings-table th:nth-child(n+3),
+.standings-table td:nth-child(n+3) {
+    padding-left: 16px;
+    text-align: center;
+}

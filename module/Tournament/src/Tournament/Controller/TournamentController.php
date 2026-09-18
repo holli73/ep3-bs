@@ -199,6 +199,20 @@ class TournamentController extends AbstractActionController
 
         $matchScores = $matchSetManager->getScoreStringsByMatches($matches);
 
+        $ownMatchTmaids = array();
+
+        if ($sessionUser) {
+            foreach ($matches as $match) {
+                $userA = $users[$match->get('player_a_tpid')] ?? null;
+                $userB = $users[$match->get('player_b_tpid')] ?? null;
+
+                if (($userA && $userA->need('uid') == $sessionUser->need('uid'))
+                    || ($userB && $userB->need('uid') == $sessionUser->need('uid'))) {
+                    $ownMatchTmaids[$match->need('tmaid')] = true;
+                }
+            }
+        }
+
         return array(
             'tournament' => $tournament,
             'category' => $category,
@@ -206,6 +220,7 @@ class TournamentController extends AbstractActionController
             'users' => $users,
             'matchScores' => $matchScores,
             'isAdmin' => $isAdmin,
+            'ownMatchTmaids' => $ownMatchTmaids,
         );
     }
 

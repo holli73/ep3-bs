@@ -106,6 +106,8 @@ class TournamentController extends AbstractActionController
         $tournamentManager = $serviceManager->get('Tournament\Manager\TournamentManager');
         $tournamentCategoryManager = $serviceManager->get('Tournament\Manager\TournamentCategoryManager');
         $tournamentGroupManager = $serviceManager->get('Tournament\Manager\TournamentGroupManager');
+        $tournamentMatchManager = $serviceManager->get('Tournament\Manager\TournamentMatchManager');
+        $tournamentMatchSetManager = $serviceManager->get('Tournament\Manager\TournamentMatchSetManager');
         $userManager = $serviceManager->get('User\Manager\UserManager');
         $standingsService = $serviceManager->get('Tournament\Service\StandingsService');
 
@@ -129,12 +131,43 @@ class TournamentController extends AbstractActionController
             }
         }
 
+        $playedMatchesByGroup = array();
+        $matchScores = array();
+
+        foreach ($groups as $group) {
+            $matches = $tournamentMatchManager->getByGroup($group);
+
+            $playedMatches = array();
+
+            foreach ($matches as $match) {
+                if ($match->need('status') != 'completed') {
+                    continue;
+                }
+
+                $playedMatches[] = $match;
+
+                $sets = $tournamentMatchSetManager->getByMatch($match);
+
+                $setStrings = array();
+
+                foreach ($sets as $set) {
+                    $setStrings[] = $set->need('games_a') . '-' . $set->need('games_b') . ($set->get('is_match_tiebreak') ? '*' : '');
+                }
+
+                $matchScores[$match->need('tmaid')] = implode(', ', $setStrings);
+            }
+
+            $playedMatchesByGroup[$group->need('tgid')] = $playedMatches;
+        }
+
         return array(
             'tournament' => $tournament,
             'category' => $category,
             'groups' => $groups,
             'standingsByGroup' => $standingsByGroup,
             'users' => $users,
+            'playedMatchesByGroup' => $playedMatchesByGroup,
+            'matchScores' => $matchScores,
         );
     }
 

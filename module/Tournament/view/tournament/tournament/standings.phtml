@@ -50,6 +50,40 @@ $this->setup(array(
             <?php endforeach; ?>
         </table>
 
+        <?php $playedMatches = $this->playedMatchesByGroup[$tgid] ?? []; ?>
+
+        <?php if ($playedMatches): ?>
+
+            <div class="separator-small"></div>
+
+            <h3><?= $this->t('Played matches') ?></h3>
+
+            <table class="default-table">
+                <?php foreach ($playedMatches as $match): ?>
+                    <?php
+                    $userA = $this->users[$match->get('player_a_tpid')] ?? null;
+                    $userB = $this->users[$match->get('player_b_tpid')] ?? null;
+                    $winnerTpid = $match->get('winner_tpid');
+                    ?>
+                    <tr>
+                        <td>
+                            <?php if ($winnerTpid == $match->get('player_a_tpid')): ?><b><?php endif; ?>
+                            <?= $userA ? $this->escapeHtml($userA->get('alias')) : $this->t('Unknown user') ?>
+                            <?php if ($winnerTpid == $match->get('player_a_tpid')): ?></b><?php endif; ?>
+                        </td>
+                        <td><?= $this->t('vs') ?></td>
+                        <td>
+                            <?php if ($winnerTpid == $match->get('player_b_tpid')): ?><b><?php endif; ?>
+                            <?= $userB ? $this->escapeHtml($userB->get('alias')) : $this->t('Unknown user') ?>
+                            <?php if ($winnerTpid == $match->get('player_b_tpid')): ?></b><?php endif; ?>
+                        </td>
+                        <td class="gray"><?= $this->escapeHtml($this->matchScores[$match->need('tmaid')] ?? '') ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+
+        <?php endif; ?>
+
         <div class="separator separator-line"></div>
 
     <?php endforeach; ?>

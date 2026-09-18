@@ -28,7 +28,7 @@ $this->setup(array(
         <h2><?= $this->escapeHtml($group->need('label')) ?></h2>
 
         <div class="table-scroll">
-            <table class="default-table standings-table">
+            <table class="default-table standings-table compact-table">
                 <tr>
                     <th>#</th>
                     <th><?= $this->t('Player') ?></th>
@@ -61,7 +61,7 @@ $this->setup(array(
             <h3><?= $this->t('Played matches') ?></h3>
 
             <div class="table-scroll">
-                <table class="default-table">
+                <table class="default-table compact-table">
                     <?php foreach ($playedMatches as $match): ?>
                         <?php
                         $userA = $this->users[$match->get('player_a_tpid')] ?? null;

@@ -820,21 +820,37 @@ option { padding-right: 16px; }
     box-sizing: border-box;
 }
 
-/* Standings table: give the stat columns (Wins/Losses/Sets/Games) a bit of
-   breathing room, keep their headers left-aligned, and center their values. */
-.standings-table th:nth-child(n+3) {
-    padding-left: 16px;
-    text-align: left;
-}
-
-.standings-table td:nth-child(n+3) {
-    padding-left: 16px;
-    text-align: center;
-}
-
-/* .default-table's 16px padding-bottom per row is meant for looser,
-   multi-line content elsewhere in the app - on this dense stats table it
-   reads as a blank row between every player, so tighten it up. */
-.standings-table td {
+/* Tables with dense stat/score rows (standings, played matches): the
+   .default-table default of 16px padding-bottom per row is tuned for
+   looser, multi-line content elsewhere in the app and reads as a blank
+   row here, so tighten it up. */
+.compact-table td {
     padding-bottom: 4px;
+}
+
+/* Standings table: center the numeric columns (#, Wins, Losses, Sets,
+   Games) under their header and give them breathing room; Player stays
+   left-aligned like the rest of the app's tables. Header and data cells
+   are given matching left/right padding here - .default-table only pads
+   td, not th, and that mismatch is what made centered columns drift out
+   of alignment between the header row and the data rows below it. */
+.standings-table th,
+.standings-table td {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.standings-table th:first-child,
+.standings-table td:first-child {
+    padding-left: 0;
+}
+
+.standings-table th:last-child,
+.standings-table td:last-child {
+    padding-right: 0;
+}
+
+.standings-table th:not(:nth-child(2)),
+.standings-table td:not(:nth-child(2)) {
+    text-align: center;
 }

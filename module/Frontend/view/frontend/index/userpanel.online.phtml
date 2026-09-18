@@ -24,9 +24,11 @@
             <a href="<?= $this->url('user/bookings') ?>" class="default-button" data-tooltip="<?= $this->userLastBookings($this->user) ?>"><span class="symbolic symbolic-booking"><?= $this->t('My bookings') ?></span></a>
         </td>
 
-        <td>
-            <a href="<?= $this->url('tournament') ?>" class="default-button"><span class="symbolic symbolic-date"><?= $this->t('Tournaments') ?></span></a>
-        </td>
+        <?php if ($this->option('service.tournament', 'true') != 'false'): ?>
+            <td>
+                <a href="<?= $this->url('tournament') ?>" class="default-button"><span class="symbolic symbolic-date"><?= $this->t('Tournaments') ?></span></a>
+            </td>
+        <?php endif; ?>
 
         <td>
             <a href="<?= $this->url('user/settings') ?>" class="default-button"><span class="symbolic symbolic-user"><?= $this->t('My account') ?></span></a>

@@ -821,8 +821,12 @@ option { padding-right: 16px; }
 }
 
 /* Standings table: give the stat columns (Wins/Losses/Sets/Games) a bit of
-   breathing room and center their values under the header. */
-.standings-table th:nth-child(n+3),
+   breathing room, keep their headers left-aligned, and center their values. */
+.standings-table th:nth-child(n+3) {
+    padding-left: 16px;
+    text-align: left;
+}
+
 .standings-table td:nth-child(n+3) {
     padding-left: 16px;
     text-align: center;

@@ -25,6 +25,7 @@ class TranslatorFactory implements FactoryInterface
         $translator->addTranslationFilePattern('phparray', getcwd() . '/data/res/i18n/', '%s/service.php');
         $translator->addTranslationFilePattern('phparray', getcwd() . '/data/res/i18n/', '%s/setup.php');
         $translator->addTranslationFilePattern('phparray', getcwd() . '/data/res/i18n/', '%s/square.php');
+        $translator->addTranslationFilePattern('phparray', getcwd() . '/data/res/i18n/', '%s/tournament.php');
         $translator->addTranslationFilePattern('phparray', getcwd() . '/data/res/i18n/', '%s/user.php');
 
         $translator->addTranslationFilePattern('phparray', getcwd() . '/data/res/i18n-custom/', '%s/backend.php');
@@ -35,6 +36,7 @@ class TranslatorFactory implements FactoryInterface
         $translator->addTranslationFilePattern('phparray', getcwd() . '/data/res/i18n-custom/', '%s/service.php');
         $translator->addTranslationFilePattern('phparray', getcwd() . '/data/res/i18n-custom/', '%s/setup.php');
         $translator->addTranslationFilePattern('phparray', getcwd() . '/data/res/i18n-custom/', '%s/square.php');
+        $translator->addTranslationFilePattern('phparray', getcwd() . '/data/res/i18n-custom/', '%s/tournament.php');
         $translator->addTranslationFilePattern('phparray', getcwd() . '/data/res/i18n-custom/', '%s/user.php');
 
         $translator->setLocale($locale);

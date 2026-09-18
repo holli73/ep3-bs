@@ -37,7 +37,7 @@ $this->setup(array(
                     <tr>
                         <td><?= $user ? $this->escapeHtml($user->get('alias') . ' (' . $user->get('email') . ')') : $this->t('Unknown user') ?></td>
                         <td><?= $this->t($participant->getStatus()) ?></td>
-                        <td><?= $this->escapeHtml($participant->need('registered_via')) ?></td>
+                        <td><?= $this->t($participant->need('registered_via')) ?></td>
                         <td><a href="<?= $this->url('backend/tournament/participants-remove', ['tpid' => $participant->need('tpid')]) ?>"><?= $this->t('Remove') ?></a></td>
                     </tr>
                 <?php endforeach; ?>

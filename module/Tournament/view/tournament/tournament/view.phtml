@@ -85,42 +85,44 @@ $this->setup(array(
 
             <h3><?= $this->t('Your matches') ?></h3>
 
-            <table class="default-table">
-                <tr>
-                    <th><?= $this->t('Round') ?></th>
-                    <th><?= $this->t('Opponent') ?></th>
-                    <th><?= $this->t('Status') ?></th>
-                    <th><?= $this->t('Score') ?></th>
-                    <th></th>
-                </tr>
-
-                <?php foreach ($this->ownMatches[$gender] as $match): ?>
-                    <?php
-                    $myTpid = $ownParticipant->need('tpid');
-                    $opponentTpid = $match->get('player_a_tpid') == $myTpid ? $match->get('player_b_tpid') : $match->get('player_a_tpid');
-                    $opponentUser = $opponentTpid ? ($this->matchUsers[$opponentTpid] ?? null) : null;
-
-                    if ($match->need('phase') == 'knockout') {
-                        $roundLabel = $this->t(\Tournament\Entity\TournamentMatch::$roundOptions[$match->get('round')] ?? 'Knockout');
-                    } else {
-                        $roundLabel = $this->t('Group stage');
-                    }
-                    ?>
+            <div class="table-scroll">
+                <table class="default-table">
                     <tr>
-                        <td><?= $this->escapeHtml($roundLabel) ?></td>
-                        <td><?= $opponentUser ? $this->escapeHtml($opponentUser->get('alias')) : $this->t('TBD') ?></td>
-                        <td><?= $this->t($match->getStatus()) ?></td>
-                        <td><?= $this->escapeHtml($this->matchScores[$match->need('tmaid')] ?? '') ?></td>
-                        <td>
-                            <?php if ($opponentTpid): ?>
-                                <a href="<?= $this->url('tournament/match-result', ['tmaid' => $match->need('tmaid')]) ?>">
-                                    <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
-                                </a>
-                            <?php endif; ?>
-                        </td>
+                        <th><?= $this->t('Round') ?></th>
+                        <th><?= $this->t('Opponent') ?></th>
+                        <th><?= $this->t('Status') ?></th>
+                        <th><?= $this->t('Score') ?></th>
+                        <th></th>
                     </tr>
-                <?php endforeach; ?>
-            </table>
+
+                    <?php foreach ($this->ownMatches[$gender] as $match): ?>
+                        <?php
+                        $myTpid = $ownParticipant->need('tpid');
+                        $opponentTpid = $match->get('player_a_tpid') == $myTpid ? $match->get('player_b_tpid') : $match->get('player_a_tpid');
+                        $opponentUser = $opponentTpid ? ($this->matchUsers[$opponentTpid] ?? null) : null;
+
+                        if ($match->need('phase') == 'knockout') {
+                            $roundLabel = $this->t(\Tournament\Entity\TournamentMatch::$roundOptions[$match->get('round')] ?? 'Knockout');
+                        } else {
+                            $roundLabel = $this->t('Group stage');
+                        }
+                        ?>
+                        <tr>
+                            <td><?= $this->escapeHtml($roundLabel) ?></td>
+                            <td><?= $opponentUser ? $this->escapeHtml($opponentUser->get('alias')) : $this->t('TBD') ?></td>
+                            <td><?= $this->t($match->getStatus()) ?></td>
+                            <td><?= $this->escapeHtml($this->matchScores[$match->need('tmaid')] ?? '') ?></td>
+                            <td>
+                                <?php if ($opponentTpid): ?>
+                                    <a href="<?= $this->url('tournament/match-result', ['tmaid' => $match->need('tmaid')]) ?>">
+                                        <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
+                                    </a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            </div>
 
         <?php endif; ?>
 

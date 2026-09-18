@@ -28,25 +28,27 @@ $this->setup(array(
 
     <?php if ($this->tournaments): ?>
 
-        <table class="default-table">
-            <tr>
-                <th><?= $this->t('Name') ?></th>
-                <th><?= $this->t('Date (Start)') ?></th>
-                <th><?= $this->t('Date (End)') ?></th>
-                <th><?= $this->t('Status') ?></th>
-                <th></th>
-            </tr>
-
-            <?php foreach ($this->tournaments as $tournament): ?>
+        <div class="table-scroll">
+            <table class="default-table">
                 <tr>
-                    <td><?= $this->escapeHtml($tournament->getMeta('name', '-')) ?></td>
-                    <td><?= $this->dateFormat(new \DateTime($tournament->need('date_start')), \IntlDateFormatter::MEDIUM) ?></td>
-                    <td><?= $this->dateFormat(new \DateTime($tournament->need('date_end')), \IntlDateFormatter::MEDIUM) ?></td>
-                    <td><?= $this->t($tournament->getStatus()) ?></td>
-                    <td><a href="<?= $this->url('backend/tournament/edit', ['tid' => $tournament->need('tid')]) ?>"><?= $this->t('Edit') ?></a></td>
+                    <th><?= $this->t('Name') ?></th>
+                    <th><?= $this->t('Date (Start)') ?></th>
+                    <th><?= $this->t('Date (End)') ?></th>
+                    <th><?= $this->t('Status') ?></th>
+                    <th></th>
                 </tr>
-            <?php endforeach; ?>
-        </table>
+
+                <?php foreach ($this->tournaments as $tournament): ?>
+                    <tr>
+                        <td><?= $this->escapeHtml($tournament->getMeta('name', '-')) ?></td>
+                        <td><?= $this->dateFormat(new \DateTime($tournament->need('date_start')), \IntlDateFormatter::MEDIUM) ?></td>
+                        <td><?= $this->dateFormat(new \DateTime($tournament->need('date_end')), \IntlDateFormatter::MEDIUM) ?></td>
+                        <td><?= $this->t($tournament->getStatus()) ?></td>
+                        <td><a href="<?= $this->url('backend/tournament/edit', ['tid' => $tournament->need('tid')]) ?>"><?= $this->t('Edit') ?></a></td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+        </div>
 
     <?php else: ?>
 

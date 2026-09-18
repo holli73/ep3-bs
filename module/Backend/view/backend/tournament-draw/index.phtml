@@ -31,55 +31,57 @@ $this->setup(array(
 
     <div class="separator separator-line"></div>
 
-    <table class="default-table" style="width: 100%;">
-        <tr>
-            <?php foreach ($this->groups as $group): ?>
-                <th style="width: <?= floor(100 / max(1, count($this->groups))) ?>%; vertical-align: top;"><?= $this->escapeHtml($group->need('label')) ?></th>
-            <?php endforeach; ?>
-        </tr>
-        <tr>
-            <?php foreach ($this->groups as $group): ?>
-                <?php $tgid = $group->need('tgid'); ?>
-                <td style="vertical-align: top;">
-                    <?php foreach ($this->participantsByGroup[$tgid] as $participant): ?>
-                        <?php
-                        $tpid = $participant->need('tpid');
-                        $user = $this->users[$tpid] ?? null;
-                        $assignment = $this->assignmentByTpid[$tpid] ?? null;
-                        $itn = $user ? $user->getItn() : null;
-                        ?>
-                        <div style="margin-bottom: 4px;">
-                            <?= $user ? $this->escapeHtml($user->get('alias')) : $this->t('Unknown user') ?>
-                            <?php if (! is_null($itn)): ?>
-                                <span class="gray">(ITN <?= $this->escapeHtml($itn) ?>)</span>
-                            <?php endif; ?>
-                            <?php if ($assignment && $assignment->get('locked')): ?>
-                                <span class="gray" title="<?= $this->t('Locked') ?>">&#128274;</span>
-                            <?php endif; ?>
+    <div class="table-scroll">
+        <table class="default-table" style="width: 100%; min-width: <?= max(600, count($this->groups) * 180) ?>px;">
+            <tr>
+                <?php foreach ($this->groups as $group): ?>
+                    <th style="width: <?= floor(100 / max(1, count($this->groups))) ?>%; vertical-align: top;"><?= $this->escapeHtml($group->need('label')) ?></th>
+                <?php endforeach; ?>
+            </tr>
+            <tr>
+                <?php foreach ($this->groups as $group): ?>
+                    <?php $tgid = $group->need('tgid'); ?>
+                    <td style="vertical-align: top;">
+                        <?php foreach ($this->participantsByGroup[$tgid] as $participant): ?>
+                            <?php
+                            $tpid = $participant->need('tpid');
+                            $user = $this->users[$tpid] ?? null;
+                            $assignment = $this->assignmentByTpid[$tpid] ?? null;
+                            $itn = $user ? $user->getItn() : null;
+                            ?>
+                            <div style="margin-bottom: 4px;">
+                                <?= $user ? $this->escapeHtml($user->get('alias')) : $this->t('Unknown user') ?>
+                                <?php if (! is_null($itn)): ?>
+                                    <span class="gray">(ITN <?= $this->escapeHtml($itn) ?>)</span>
+                                <?php endif; ?>
+                                <?php if ($assignment && $assignment->get('locked')): ?>
+                                    <span class="gray" title="<?= $this->t('Locked') ?>">&#128274;</span>
+                                <?php endif; ?>
 
-                            <?php if (count($this->groups) > 1): ?>
-                                <form method="post" action="<?= $this->url('backend/tournament/draw/assign', ['tcid' => $tcid]) ?>" style="display: inline;">
+                                <?php if (count($this->groups) > 1): ?>
+                                    <form method="post" action="<?= $this->url('backend/tournament/draw/assign', ['tcid' => $tcid]) ?>" style="display: inline;">
+                                        <input type="hidden" name="tpid" value="<?= $tpid ?>">
+                                        <select name="tgid" style="width: auto;">
+                                            <?php foreach ($this->groups as $otherGroup): ?>
+                                                <?php if ($otherGroup->need('tgid') == $tgid) continue; ?>
+                                                <option value="<?= $otherGroup->need('tgid') ?>"><?= $this->escapeHtml($otherGroup->need('label')) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <button type="submit" class="unlined gray" style="border: none; background: none; cursor: pointer; padding: 0;"><?= $this->t('Move') ?></button>
+                                    </form>
+                                <?php endif; ?>
+
+                                <form method="post" action="<?= $this->url('backend/tournament/draw/unassign', ['tcid' => $tcid]) ?>" style="display: inline;">
                                     <input type="hidden" name="tpid" value="<?= $tpid ?>">
-                                    <select name="tgid" style="width: auto;">
-                                        <?php foreach ($this->groups as $otherGroup): ?>
-                                            <?php if ($otherGroup->need('tgid') == $tgid) continue; ?>
-                                            <option value="<?= $otherGroup->need('tgid') ?>"><?= $this->escapeHtml($otherGroup->need('label')) ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <button type="submit" class="unlined gray" style="border: none; background: none; cursor: pointer; padding: 0;"><?= $this->t('Move') ?></button>
+                                    <button type="submit" class="unlined gray" style="border: none; background: none; cursor: pointer; padding: 0;"><?= $this->t('Remove') ?></button>
                                 </form>
-                            <?php endif; ?>
-
-                            <form method="post" action="<?= $this->url('backend/tournament/draw/unassign', ['tcid' => $tcid]) ?>" style="display: inline;">
-                                <input type="hidden" name="tpid" value="<?= $tpid ?>">
-                                <button type="submit" class="unlined gray" style="border: none; background: none; cursor: pointer; padding: 0;"><?= $this->t('Remove') ?></button>
-                            </form>
-                        </div>
-                    <?php endforeach; ?>
-                </td>
-            <?php endforeach; ?>
-        </tr>
-    </table>
+                            </div>
+                        <?php endforeach; ?>
+                    </td>
+                <?php endforeach; ?>
+            </tr>
+        </table>
+    </div>
 
     <div class="separator separator-line"></div>
 
@@ -87,30 +89,32 @@ $this->setup(array(
 
     <?php if ($this->unassignedParticipants): ?>
 
-        <table class="default-table">
-            <?php foreach ($this->unassignedParticipants as $participant): ?>
-                <?php
-                $tpid = $participant->need('tpid');
-                $user = $this->users[$tpid] ?? null;
-                $itn = $user ? $user->getItn() : null;
-                ?>
-                <tr>
-                    <td><?= $user ? $this->escapeHtml($user->get('alias')) : $this->t('Unknown user') ?></td>
-                    <td><?= is_null($itn) ? '' : sprintf($this->t('ITN %s'), $this->escapeHtml($itn)) ?></td>
-                    <td>
-                        <form method="post" action="<?= $this->url('backend/tournament/draw/assign', ['tcid' => $tcid]) ?>" style="display: inline;">
-                            <input type="hidden" name="tpid" value="<?= $tpid ?>">
-                            <select name="tgid">
-                                <?php foreach ($this->groups as $group): ?>
-                                    <option value="<?= $group->need('tgid') ?>"><?= $this->escapeHtml($group->need('label')) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <button type="submit" class="default-button"><?= $this->t('Pin to group') ?></button>
-                        </form>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
+        <div class="table-scroll">
+            <table class="default-table">
+                <?php foreach ($this->unassignedParticipants as $participant): ?>
+                    <?php
+                    $tpid = $participant->need('tpid');
+                    $user = $this->users[$tpid] ?? null;
+                    $itn = $user ? $user->getItn() : null;
+                    ?>
+                    <tr>
+                        <td><?= $user ? $this->escapeHtml($user->get('alias')) : $this->t('Unknown user') ?></td>
+                        <td><?= is_null($itn) ? '' : sprintf($this->t('ITN %s'), $this->escapeHtml($itn)) ?></td>
+                        <td>
+                            <form method="post" action="<?= $this->url('backend/tournament/draw/assign', ['tcid' => $tcid]) ?>" style="display: inline;">
+                                <input type="hidden" name="tpid" value="<?= $tpid ?>">
+                                <select name="tgid">
+                                    <?php foreach ($this->groups as $group): ?>
+                                        <option value="<?= $group->need('tgid') ?>"><?= $this->escapeHtml($group->need('label')) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <button type="submit" class="default-button"><?= $this->t('Pin to group') ?></button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+        </div>
 
     <?php else: ?>
 

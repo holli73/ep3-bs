@@ -42,63 +42,65 @@ $playerName = function ($match, $property) {
 
     <?php else: ?>
 
-        <table class="default-table" style="width: 100%;">
-            <tr>
-                <th style="width: 40%;"><?= $this->t('Quarterfinal') ?></th>
-                <th style="width: 30%;"><?= $this->t('Semifinal') ?></th>
-                <th style="width: 30%;"><?= $this->t('Final') ?></th>
-            </tr>
-            <tr>
-                <td style="vertical-align: top;">
-                    <?php foreach ($this->matchesByRound['qf'] as $match): ?>
-                        <div style="margin-bottom: 12px;">
-                            <?= $playerName($match, 'player_a_tpid') ?>
-                            <br>
-                            <?= $playerName($match, 'player_b_tpid') ?>
-                            <?php if ($score = $this->scoresByMatch[$match->need('tmaid')] ?? null): ?>
-                                <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
-                            <?php endif; ?>
-                            <br>
-                            <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
-                                <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
-                            </a>
-                        </div>
-                    <?php endforeach; ?>
-                </td>
-                <td style="vertical-align: top;">
-                    <?php foreach ($this->matchesByRound['sf'] as $match): ?>
-                        <div style="margin-bottom: 24px;">
-                            <?= $playerName($match, 'player_a_tpid') ?>
-                            <br>
-                            <?= $playerName($match, 'player_b_tpid') ?>
-                            <?php if ($score = $this->scoresByMatch[$match->need('tmaid')] ?? null): ?>
-                                <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
-                            <?php endif; ?>
-                            <br>
-                            <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
-                                <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
-                            </a>
-                        </div>
-                    <?php endforeach; ?>
-                </td>
-                <td style="vertical-align: top;">
-                    <?php foreach ($this->matchesByRound['final'] as $match): ?>
-                        <div style="margin-bottom: 12px;">
-                            <?= $playerName($match, 'player_a_tpid') ?>
-                            <br>
-                            <?= $playerName($match, 'player_b_tpid') ?>
-                            <?php if ($score = $this->scoresByMatch[$match->need('tmaid')] ?? null): ?>
-                                <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
-                            <?php endif; ?>
-                            <br>
-                            <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
-                                <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
-                            </a>
-                        </div>
-                    <?php endforeach; ?>
-                </td>
-            </tr>
-        </table>
+        <div class="table-scroll">
+            <table class="default-table" style="width: 100%; min-width: 600px;">
+                <tr>
+                    <th style="width: 40%;"><?= $this->t('Quarterfinal') ?></th>
+                    <th style="width: 30%;"><?= $this->t('Semifinal') ?></th>
+                    <th style="width: 30%;"><?= $this->t('Final') ?></th>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;">
+                        <?php foreach ($this->matchesByRound['qf'] as $match): ?>
+                            <div style="margin-bottom: 12px;">
+                                <?= $playerName($match, 'player_a_tpid') ?>
+                                <br>
+                                <?= $playerName($match, 'player_b_tpid') ?>
+                                <?php if ($score = $this->scoresByMatch[$match->need('tmaid')] ?? null): ?>
+                                    <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
+                                <?php endif; ?>
+                                <br>
+                                <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
+                                    <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
+                    </td>
+                    <td style="vertical-align: top;">
+                        <?php foreach ($this->matchesByRound['sf'] as $match): ?>
+                            <div style="margin-bottom: 24px;">
+                                <?= $playerName($match, 'player_a_tpid') ?>
+                                <br>
+                                <?= $playerName($match, 'player_b_tpid') ?>
+                                <?php if ($score = $this->scoresByMatch[$match->need('tmaid')] ?? null): ?>
+                                    <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
+                                <?php endif; ?>
+                                <br>
+                                <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
+                                    <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
+                    </td>
+                    <td style="vertical-align: top;">
+                        <?php foreach ($this->matchesByRound['final'] as $match): ?>
+                            <div style="margin-bottom: 12px;">
+                                <?= $playerName($match, 'player_a_tpid') ?>
+                                <br>
+                                <?= $playerName($match, 'player_b_tpid') ?>
+                                <?php if ($score = $this->scoresByMatch[$match->need('tmaid')] ?? null): ?>
+                                    <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
+                                <?php endif; ?>
+                                <br>
+                                <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
+                                    <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
     <?php endif; ?>
 

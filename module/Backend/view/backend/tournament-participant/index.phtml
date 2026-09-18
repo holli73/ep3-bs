@@ -23,24 +23,26 @@ $this->setup(array(
 
     <?php if ($this->participants): ?>
 
-        <table class="default-table">
-            <tr>
-                <th><?= $this->t('User') ?></th>
-                <th><?= $this->t('Status') ?></th>
-                <th><?= $this->t('Registered via') ?></th>
-                <th></th>
-            </tr>
-
-            <?php foreach ($this->participants as $participant): ?>
-                <?php $user = $this->users[$participant->need('tpid')] ?? null; ?>
+        <div class="table-scroll">
+            <table class="default-table">
                 <tr>
-                    <td><?= $user ? $this->escapeHtml($user->get('alias') . ' (' . $user->get('email') . ')') : $this->t('Unknown user') ?></td>
-                    <td><?= $this->t($participant->getStatus()) ?></td>
-                    <td><?= $this->escapeHtml($participant->need('registered_via')) ?></td>
-                    <td><a href="<?= $this->url('backend/tournament/participants-remove', ['tpid' => $participant->need('tpid')]) ?>"><?= $this->t('Remove') ?></a></td>
+                    <th><?= $this->t('User') ?></th>
+                    <th><?= $this->t('Status') ?></th>
+                    <th><?= $this->t('Registered via') ?></th>
+                    <th></th>
                 </tr>
-            <?php endforeach; ?>
-        </table>
+
+                <?php foreach ($this->participants as $participant): ?>
+                    <?php $user = $this->users[$participant->need('tpid')] ?? null; ?>
+                    <tr>
+                        <td><?= $user ? $this->escapeHtml($user->get('alias') . ' (' . $user->get('email') . ')') : $this->t('Unknown user') ?></td>
+                        <td><?= $this->t($participant->getStatus()) ?></td>
+                        <td><?= $this->escapeHtml($participant->need('registered_via')) ?></td>
+                        <td><a href="<?= $this->url('backend/tournament/participants-remove', ['tpid' => $participant->need('tpid')]) ?>"><?= $this->t('Remove') ?></a></td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+        </div>
 
     <?php else: ?>
 

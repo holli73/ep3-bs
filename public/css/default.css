@@ -805,3 +805,7 @@ option { padding-right: 16px; }
 
     #footer { margin: 0; border: none; }
 }
+
+/* Lets a wide table scroll horizontally instead of breaking the page layout
+   or cutting off its last column, on any viewport too narrow for it. */
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }

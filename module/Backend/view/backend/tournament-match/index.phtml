@@ -35,34 +35,36 @@ $this->setup(array(
 
         <?php if ($matches): ?>
 
-            <table class="default-table">
-                <tr>
-                    <th><?= $this->t('Player A') ?></th>
-                    <th><?= $this->t('Player B') ?></th>
-                    <th><?= $this->t('Status') ?></th>
-                    <th><?= $this->t('Score') ?></th>
-                    <th></th>
-                </tr>
-
-                <?php foreach ($matches as $match): ?>
-                    <?php
-                    $userA = $this->users[$match->get('player_a_tpid')] ?? null;
-                    $userB = $this->users[$match->get('player_b_tpid')] ?? null;
-                    $score = $this->scoresByMatch[$match->need('tmaid')] ?? '';
-                    ?>
+            <div class="table-scroll">
+                <table class="default-table">
                     <tr>
-                        <td><?= $userA ? $this->escapeHtml($userA->get('alias')) : $this->t('Unknown user') ?></td>
-                        <td><?= $userB ? $this->escapeHtml($userB->get('alias')) : $this->t('Unknown user') ?></td>
-                        <td><?= $this->t($match->getStatus()) ?></td>
-                        <td><?= $this->escapeHtml($score) ?></td>
-                        <td>
-                            <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
-                                <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
-                            </a>
-                        </td>
+                        <th><?= $this->t('Player A') ?></th>
+                        <th><?= $this->t('Player B') ?></th>
+                        <th><?= $this->t('Status') ?></th>
+                        <th><?= $this->t('Score') ?></th>
+                        <th></th>
                     </tr>
-                <?php endforeach; ?>
-            </table>
+
+                    <?php foreach ($matches as $match): ?>
+                        <?php
+                        $userA = $this->users[$match->get('player_a_tpid')] ?? null;
+                        $userB = $this->users[$match->get('player_b_tpid')] ?? null;
+                        $score = $this->scoresByMatch[$match->need('tmaid')] ?? '';
+                        ?>
+                        <tr>
+                            <td><?= $userA ? $this->escapeHtml($userA->get('alias')) : $this->t('Unknown user') ?></td>
+                            <td><?= $userB ? $this->escapeHtml($userB->get('alias')) : $this->t('Unknown user') ?></td>
+                            <td><?= $this->t($match->getStatus()) ?></td>
+                            <td><?= $this->escapeHtml($score) ?></td>
+                            <td>
+                                <a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
+                                    <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            </div>
 
         <?php else: ?>
 

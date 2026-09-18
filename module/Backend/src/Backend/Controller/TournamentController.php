@@ -81,9 +81,11 @@ class TournamentController extends AbstractActionController
                 $categories = $tournamentCategoryManager->ensureBothGenders($tournament);
 
                 $categories['male']->set('group_size', $data['tf-male-group-size']);
+                $categories['male']->set('status', $data['tf-status']);
                 $tournamentCategoryManager->save($categories['male']);
 
                 $categories['female']->set('group_size', $data['tf-female-group-size']);
+                $categories['female']->set('status', $data['tf-status']);
                 $tournamentCategoryManager->save($categories['female']);
 
                 $this->flashMessenger()->addSuccessMessage('Tournament has been saved');

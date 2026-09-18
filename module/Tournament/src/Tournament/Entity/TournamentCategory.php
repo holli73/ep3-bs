@@ -44,11 +44,13 @@ class TournamentCategory extends AbstractEntity
      * @var array
      */
     public static $statusOptions = array(
+        'draft' => 'Draft',
         'registration-open' => 'Registration open',
         'registration-closed' => 'Registration closed',
         'group-phase' => 'Group phase',
         'knockout-phase' => 'Knockout phase',
         'completed' => 'Completed',
+        'cancelled' => 'Cancelled',
     );
 
     /**

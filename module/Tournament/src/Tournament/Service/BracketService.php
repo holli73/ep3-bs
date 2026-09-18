@@ -125,8 +125,10 @@ class BracketService extends AbstractService
     /**
      * Resets a match back to its pre-result state: removes its sets, clears
      * the winner and status, and — for a knockout match that already fed a
-     * winner into the next round — also clears that slot in the next match,
-     * so a stale advanced player isn't left behind.
+     * winner into the next round — also clears that slot in the next match.
+     * If that next match had itself already been completed, its own result
+     * is now invalid (one of its two players just got removed), so it gets
+     * reset too, cascading as far up the bracket as necessary.
      *
      * @param TournamentMatch $match
      * @return TournamentMatch
@@ -141,22 +143,7 @@ class BracketService extends AbstractService
         }
 
         try {
-            $this->matchSetManager->replaceSets($match, array());
-
-            $match->set('winner_tpid', null);
-            $match->set('status', 'scheduled');
-
-            $this->matchManager->save($match);
-
-            if ($match->need('phase') == 'knockout' && $match->get('feeds_into_tmaid')) {
-                $nextMatch = $this->matchManager->get($match->need('feeds_into_tmaid'));
-
-                $slotProperty = $match->need('feeds_into_slot') == 'A' ? 'player_a_tpid' : 'player_b_tpid';
-
-                $nextMatch->set($slotProperty, null);
-
-                $this->matchManager->save($nextMatch);
-            }
+            $this->resetResultCascading($match);
 
             if ($transaction) {
                 $this->connection->commit();
@@ -173,6 +160,38 @@ class BracketService extends AbstractService
         $this->getEventManager()->trigger('match.reset', $match);
 
         return $match;
+    }
+
+    /**
+     * Does the actual reset-and-cascade work for resetResult(), without its
+     * own transaction handling (so it can call itself for the cascade).
+     *
+     * @param TournamentMatch $match
+     */
+    protected function resetResultCascading(TournamentMatch $match)
+    {
+        $this->matchSetManager->replaceSets($match, array());
+
+        $match->set('winner_tpid', null);
+        $match->set('status', 'scheduled');
+
+        $this->matchManager->save($match);
+
+        if ($match->need('phase') != 'knockout' || ! $match->get('feeds_into_tmaid')) {
+            return;
+        }
+
+        $nextMatch = $this->matchManager->get($match->need('feeds_into_tmaid'));
+
+        $slotProperty = $match->need('feeds_into_slot') == 'A' ? 'player_a_tpid' : 'player_b_tpid';
+
+        $nextMatch->set($slotProperty, null);
+
+        if ($nextMatch->need('status') == 'completed') {
+            $this->resetResultCascading($nextMatch);
+        } else {
+            $this->matchManager->save($nextMatch);
+        }
     }
 
     /**

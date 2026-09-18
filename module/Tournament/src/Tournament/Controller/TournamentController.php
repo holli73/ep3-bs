@@ -156,6 +156,10 @@ class TournamentController extends AbstractActionController
         $matchSetManager = $serviceManager->get('Tournament\Manager\TournamentMatchSetManager');
         $participantManager = $serviceManager->get('Tournament\Manager\TournamentParticipantManager');
         $userManager = $serviceManager->get('User\Manager\UserManager');
+        $userSessionManager = $serviceManager->get('User\Manager\UserSessionManager');
+
+        $sessionUser = $userSessionManager->getSessionUser();
+        $isAdmin = $sessionUser && $sessionUser->can('admin.tournament');
 
         $tcid = $this->params()->fromRoute('tcid');
 
@@ -201,6 +205,7 @@ class TournamentController extends AbstractActionController
             'matchesByRound' => $matchesByRound,
             'users' => $users,
             'matchScores' => $matchScores,
+            'isAdmin' => $isAdmin,
         );
     }
 

@@ -54,6 +54,11 @@ $playerName = function ($match, $property) {
                             <?php if ($score = $this->matchScores[$match->need('tmaid')] ?? null): ?>
                                 <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
                             <?php endif; ?>
+                            <?php if ($this->isAdmin && $match->get('player_a_tpid') && $match->get('player_b_tpid')): ?>
+                                <br><a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
+                                    <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
+                                </a>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </td>
@@ -66,6 +71,11 @@ $playerName = function ($match, $property) {
                             <?php if ($score = $this->matchScores[$match->need('tmaid')] ?? null): ?>
                                 <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
                             <?php endif; ?>
+                            <?php if ($this->isAdmin && $match->get('player_a_tpid') && $match->get('player_b_tpid')): ?>
+                                <br><a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
+                                    <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
+                                </a>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </td>
@@ -77,6 +87,11 @@ $playerName = function ($match, $property) {
                             <?= $playerName($match, 'player_b_tpid') ?>
                             <?php if ($score = $this->matchScores[$match->need('tmaid')] ?? null): ?>
                                 <br><span class="gray"><?= $this->escapeHtml($score) ?></span>
+                            <?php endif; ?>
+                            <?php if ($this->isAdmin && $match->get('player_a_tpid') && $match->get('player_b_tpid')): ?>
+                                <br><a href="<?= $this->url('backend/tournament/matches-result', ['tmaid' => $match->need('tmaid')]) ?>">
+                                    <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
+                                </a>
                             <?php endif; ?>
                         </div>
                     <?php endforeach; ?>

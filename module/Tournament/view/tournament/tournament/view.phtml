@@ -1,0 +1,135 @@
+<?php
+
+$this->setup(array(
+    'title' => 'Tournament',
+    'panel' => 'centered-panel large-sized',
+    'back' => array(
+        'Tournaments' => $this->url('tournament'),
+    ),
+));
+
+?>
+
+<div>
+    <h1><?= $this->escapeHtml($this->tournament->getMeta('name', $this->t('Tournament'))) ?></h1>
+
+    <div class="separator-small"></div>
+
+    <?php if ($this->tournament->getMeta('description')): ?>
+        <p><?= nl2br($this->escapeHtml($this->tournament->getMeta('description'))) ?></p>
+
+        <div class="separator-small"></div>
+    <?php endif; ?>
+
+    <p>
+        <?= $this->dateFormat(new \DateTime($this->tournament->need('date_start')), \IntlDateFormatter::MEDIUM) ?>
+        &ndash;
+        <?= $this->dateFormat(new \DateTime($this->tournament->need('date_end')), \IntlDateFormatter::MEDIUM) ?>
+    </p>
+
+    <div class="separator separator-line"></div>
+
+    <?php foreach ($this->categories as $gender => $category): ?>
+
+        <h2><?= $this->t($category->getGender()) ?></h2>
+
+        <p>
+            <?= $this->t('Status') ?>: <?= $this->t($category->getStatus()) ?>
+            &nbsp;&middot;&nbsp;
+            <?= sprintf($this->t('%d registered'), $this->participantCounts[$gender] ?? 0) ?>
+            &nbsp;&middot;&nbsp;
+            <a href="<?= $this->url('tournament/standings', ['tcid' => $category->need('tcid')]) ?>"><?= $this->t('Standings') ?></a>
+            &nbsp;&middot;&nbsp;
+            <a href="<?= $this->url('tournament/bracket', ['tcid' => $category->need('tcid')]) ?>"><?= $this->t('Bracket') ?></a>
+        </p>
+
+        <?php
+
+        $ownParticipant = $this->ownParticipants[$gender] ?? null;
+
+        ?>
+
+        <?php if (! $this->user): ?>
+
+            <p>
+                <a href="<?= $this->url('user/login') ?>" class="default-button"><?= $this->t('Login to register') ?></a>
+            </p>
+
+        <?php elseif ($ownParticipant && $ownParticipant->need('status') == 'registered'): ?>
+
+            <p class="green"><?= $this->t('You are registered for this category') ?></p>
+
+            <?php if ($category->need('status') == 'registration-open'): ?>
+                <form method="post" action="<?= $this->url('tournament/withdraw', ['tpid' => $ownParticipant->need('tpid')]) ?>">
+                    <button type="submit" class="default-button"><?= $this->t('Withdraw') ?></button>
+                </form>
+            <?php endif; ?>
+
+        <?php elseif ($ownParticipant && $ownParticipant->need('status') == 'disqualified'): ?>
+
+            <p class="red"><?= $this->t('You are disqualified from this category') ?></p>
+
+        <?php elseif ($category->need('status') == 'registration-open'): ?>
+
+            <form method="post" action="<?= $this->url('tournament/register', ['tcid' => $category->need('tcid')]) ?>">
+                <button type="submit" class="default-button"><?= $this->t('Register') ?></button>
+            </form>
+
+        <?php else: ?>
+
+            <p class="gray"><?= $this->t('Registration is not open for this category') ?></p>
+
+        <?php endif; ?>
+
+        <?php if (! empty($this->ownMatches[$gender])): ?>
+
+            <div class="separator-small"></div>
+
+            <h3><?= $this->t('Your matches') ?></h3>
+
+            <div class="table-scroll">
+                <table class="default-table compact-table">
+                    <tr>
+                        <th><?= $this->t('Round') ?></th>
+                        <th><?= $this->t('Opponent') ?></th>
+                        <th><?= $this->t('Status') ?></th>
+                        <th><?= $this->t('Score') ?></th>
+                        <th></th>
+                    </tr>
+
+                    <?php foreach ($this->ownMatches[$gender] as $match): ?>
+                        <?php
+                        $myTpid = $ownParticipant->need('tpid');
+                        $opponentTpid = $match->get('player_a_tpid') == $myTpid ? $match->get('player_b_tpid') : $match->get('player_a_tpid');
+                        $opponentUser = $opponentTpid ? ($this->matchUsers[$opponentTpid] ?? null) : null;
+
+                        if ($match->need('phase') == 'knockout') {
+                            $roundLabel = $this->t(\Tournament\Entity\TournamentMatch::$roundOptions[$match->get('round')] ?? 'Knockout');
+                        } else {
+                            $roundLabel = $this->t('Group stage');
+                        }
+                        ?>
+                        <tr>
+                            <td><?= $this->escapeHtml($roundLabel) ?></td>
+                            <td><?= $opponentUser ? $this->escapeHtml($opponentUser->get('alias')) : $this->t('TBD') ?></td>
+                            <td><?= $this->t($match->getStatus()) ?></td>
+                            <td><?= $this->escapeHtml($this->matchScores[$match->need('tmaid')] ?? '') ?></td>
+                            <td>
+                                <?php if ($opponentTpid): ?>
+                                    <a href="<?= $this->url('tournament/match-result', ['tmaid' => $match->need('tmaid')]) ?>">
+                                        <?= $match->need('status') == 'completed' ? $this->t('Edit result') : $this->t('Enter result') ?>
+                                    </a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            </div>
+
+        <?php endif; ?>
+
+        <div class="separator separator-line"></div>
+
+    <?php endforeach; ?>
+
+</div>

@@ -134,6 +134,19 @@ class EditForm extends Form
         ));
 
         $this->add(array(
+            'name' => 'euf-itn',
+            'type' => 'Text',
+            'attributes' => array(
+                'id' => 'euf-itn',
+                'style' => 'width: 60px;',
+            ),
+            'options' => array(
+                'label' => 'Tournament rating (ITN)',
+                'notes' => 'Optional. Used only to seed tournament draws, higher is stronger.',
+            ),
+        ));
+
+        $this->add(array(
             'name' => 'euf-firstname',
             'type' => 'Text',
             'attributes' => array(
@@ -467,6 +480,20 @@ class EditForm extends Form
                 'required' => false,
                 'filters' => array(
                     array('name' => 'StringTrim'),
+                ),
+            ),
+            'euf-itn' => array(
+                'required' => false,
+                'filters' => array(
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'Float',
+                        'options' => array(
+                            'message' => 'Please type a number here',
+                        ),
+                    ),
                 ),
             ),
         )));

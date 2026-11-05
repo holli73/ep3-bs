@@ -87,6 +87,7 @@ return [
     'Can manage users' => 'Kezelhet felhasználókat',
     'Can manage bookings' => 'Kezelhet foglalásokat',
     'Can manage events' => 'Kezelhet eseményeket',
+    'Can manage tournaments' => 'Kezelhet tornákat',
     'Can change configuration' => 'Változtathat beállításokat',
     'Sees the admin menu' => 'Láthatja az adminisztrátori menüt',
     'Sees past bookings' => 'Láthatja az előzményeket naptárban',

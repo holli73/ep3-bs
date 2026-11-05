@@ -74,6 +74,24 @@ class User extends AbstractEntity
     }
 
     /**
+     * Returns the user's tournament rating (ITN), used purely for seeding tournament
+     * draws. Admin-editable only, not self-reported. Higher means stronger.
+     *
+     * @param mixed $default
+     * @return float|null
+     */
+    public function getItn($default = null)
+    {
+        $itn = $this->getMeta('tournament.itn');
+
+        if (is_null($itn)) {
+            return $default;
+        }
+
+        return (float) $itn;
+    }
+
+    /**
      * The possible privileges.
      *
      * @var array
@@ -82,6 +100,7 @@ class User extends AbstractEntity
         'admin.user' => 'Can manage users',
         'admin.booking' => 'Can manage bookings',
         'admin.event' => 'Can manage events',
+        'admin.tournament' => 'Can manage tournaments',
         'admin.config' => 'Can change configuration',
         'admin.see-menu' => 'Sees the admin menu',
         'calendar.see-past' => 'Sees past bookings',

@@ -1,0 +1,98 @@
+<?php
+
+if ($this->tournament) {
+    $tid = $this->tournament->need('tid');
+} else {
+    $tid = null;
+}
+
+$this->setup(array(
+    'title' => 'Tournament-Administration',
+    'panel' => 'centered-panel large-sized',
+    'back' => array(
+        'Tournament-Administration' => $this->url('backend/tournament'),
+    ),
+    'links' => array(
+        'User-Administration' => $this->url('backend/user'),
+        'Booking-Administration' => $this->url('backend/booking'),
+        'Configuration' => $this->url('backend/config'),
+    ),
+));
+
+?>
+
+<div>
+    <h1><?= $this->t('Tournament-Administration') ?></h1>
+
+    <div class="separator-small"></div>
+
+    <div class="separator separator-line"></div>
+
+    <div class="padded">
+        <?php
+
+        $form = $this->editForm;
+        $form->setAttribute('method', 'post');
+        $form->setAttribute('action', $this->url('backend/tournament/edit', ['tid' => $tid]));
+        $form->prepare();
+
+        ?>
+
+        <?= $this->form()->openTag($form) ?>
+
+        <table class="default-table">
+            <?= $this->formRowDefault($form, 'tf-name') ?>
+            <?= $this->formRowDefault($form, 'tf-description') ?>
+            <?= $this->formRowDefault($form, 'tf-date-start') ?>
+            <?= $this->formRowDefault($form, 'tf-date-end') ?>
+            <?= $this->formRowDefault($form, 'tf-registration-deadline') ?>
+            <?= $this->formRowDefault($form, 'tf-status') ?>
+            <?= $this->formRowDefault($form, 'tf-male-group-size') ?>
+            <?= $this->formRowDefault($form, 'tf-female-group-size') ?>
+
+            <tr>
+                <td>&nbsp;</td>
+
+                <td>
+                    <?= $this->formElement($form->get('tf-submit')) ?>
+
+                    <?php if ($this->tournament): ?>
+                        <span class="gray" style="margin: 0 8px;"><?= $this->t('or') ?></span>
+
+                        <a href="<?= $this->url('backend/tournament/delete', ['tid' => $tid]) ?>" class="default-button">
+                            <span class="symbolic symbolic-cross"><?= $this->t('Delete') ?></span>
+                        </a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        </table>
+
+        <?= $this->form()->closeTag() ?>
+    </div>
+
+    <?php if ($this->tournament && $this->categories): ?>
+
+        <div class="separator separator-line"></div>
+
+        <div class="padded">
+            <p>
+                <?php foreach ($this->categories as $gender => $category): ?>
+                    <a href="<?= $this->url('backend/tournament/participants', ['tcid' => $category->need('tcid')]) ?>" class="default-button" style="margin-right: 8px;">
+                        <?= sprintf($this->t('Participants (%s)'), $this->t($category->getGender())) ?>
+                    </a>
+                    <a href="<?= $this->url('backend/tournament/draw', ['tcid' => $category->need('tcid')]) ?>" class="default-button" style="margin-right: 8px;">
+                        <?= sprintf($this->t('Draw (%s)'), $this->t($category->getGender())) ?>
+                    </a>
+                    <a href="<?= $this->url('backend/tournament/matches', ['tcid' => $category->need('tcid')]) ?>" class="default-button" style="margin-right: 8px;">
+                        <?= sprintf($this->t('Matches (%s)'), $this->t($category->getGender())) ?>
+                    </a>
+                    <a href="<?= $this->url('backend/tournament/knockout', ['tcid' => $category->need('tcid')]) ?>" class="default-button" style="margin-right: 8px;">
+                        <?= sprintf($this->t('Knockout (%s)'), $this->t($category->getGender())) ?>
+                    </a>
+                <?php endforeach; ?>
+            </p>
+        </div>
+
+    <?php endif; ?>
+
+</div>

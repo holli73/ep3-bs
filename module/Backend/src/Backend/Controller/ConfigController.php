@@ -126,6 +126,7 @@ class ConfigController extends AbstractActionController
                 $maintenanceMessage = $data['cf-maintenance-message'];
                 $registration = $data['cf-registration'];
                 $registrationMessage = $data['cf-registration-message'];
+                $tournament = $data['cf-tournament'];
                 $activation = $data['cf-activation'];
                 $userDefaultMaxActiveBookings = $data['cf-user-default-max-active-bookings'];
                 $calendarDays = $data['cf-calendar-days'];
@@ -137,6 +138,7 @@ class ConfigController extends AbstractActionController
                 $optionManager->set('service.maintenance.message', $maintenanceMessage, $locale);
                 $optionManager->set('service.user.registration', $registration);
                 $optionManager->set('service.user.registration.message', $registrationMessage, $locale);
+                $optionManager->set('service.tournament', $tournament);
                 $optionManager->set('service.user.activation', $activation);
                 $optionManager->set('service.user.default.max_active_bookings', $userDefaultMaxActiveBookings);
                 $optionManager->set('service.calendar.days', $calendarDays);
@@ -153,6 +155,7 @@ class ConfigController extends AbstractActionController
             $behaviourForm->get('cf-maintenance-message')->setValue($optionManager->get('service.maintenance.message'));
             $behaviourForm->get('cf-registration')->setValue($optionManager->get('service.user.registration', 'false'));
             $behaviourForm->get('cf-registration-message')->setValue($optionManager->get('service.user.registration.message'));
+            $behaviourForm->get('cf-tournament')->setValue($optionManager->get('service.tournament', 'true'));
             $behaviourForm->get('cf-activation')->setValue($optionManager->get('service.user.activation', 'email'));
             $behaviourForm->get('cf-user-default-max-active-bookings')->setValue($optionManager->get('service.user.default.max_active_bookings', '0'));
             $behaviourForm->get('cf-calendar-days')->setValue($optionManager->get('service.calendar.days', '4'));

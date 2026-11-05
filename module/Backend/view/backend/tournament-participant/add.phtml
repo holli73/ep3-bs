@@ -1,0 +1,53 @@
+<?php
+
+$tcid = $this->category->need('tcid');
+
+$this->setup(array(
+    'title' => 'Tournament-Administration',
+    'panel' => 'centered-panel',
+    'back' => array(
+        'Participants' => $this->url('backend/tournament/participants', ['tcid' => $tcid]),
+    ),
+));
+
+?>
+
+<div>
+    <h1><?= $this->t('Add participant') ?></h1>
+
+    <div class="separator-small"></div>
+
+    <p><?= $this->escapeHtml($this->tournament->getMeta('name', '-')) ?> &middot; <?= $this->t($this->category->getGender()) ?></p>
+
+    <div class="separator separator-line"></div>
+
+    <div class="padded">
+        <?php
+
+        $form = $this->participantForm;
+        $form->setAttribute('method', 'post');
+        $form->setAttribute('action', $this->url('backend/tournament/participants/add', ['tcid' => $tcid]));
+        $form->prepare();
+
+        ?>
+
+        <?= $this->form()->openTag($form) ?>
+
+        <table class="default-table">
+            <?= $this->formRowDefault($form, 'puf-user') ?>
+
+            <tr>
+                <td>&nbsp;</td>
+                <td><?= $this->formElement($form->get('puf-submit')) ?></td>
+            </tr>
+        </table>
+
+        <?= $this->form()->closeTag() ?>
+    </div>
+
+    <div id="puf-url-provider"
+         data-user-autocomplete-url="<?= $this->url('backend/user/interpret') ?>"></div>
+</div>
+
+<?= $this->ajaxAwareScript('js/controller/backend/tournament-participant/add.min.js') ?>
+

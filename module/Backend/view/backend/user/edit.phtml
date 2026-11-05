@@ -136,6 +136,7 @@ $this->headScript()->appendFile($this->basePath('js/controller/backend/user/edit
                         <?= $this->formElementErrors($form->get('euf-gender')) ?>
                     </td>
                 </tr>
+                <?= $this->formRowDefault($form, 'euf-itn') ?>
                 <tr>
                     <td class="default-form-label-row">
                         <?= $this->formLabel($form->get('euf-firstname')) ?>

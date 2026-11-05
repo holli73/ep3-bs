@@ -1,0 +1,31 @@
+<?php
+
+$tpid = $this->participant->need('tpid');
+
+$backUrl = $this->url('backend/tournament/participants', ['tcid' => $this->category->need('tcid')]);
+
+$this->setup(array(
+    'title' => 'Remove this participant',
+    'panel' => 'centered-panel',
+    'back' => array(
+        'Participants' => $backUrl,
+    ),
+));
+
+?>
+
+<div class="padded centered-text">
+    <p><span class="symbolic symbolic-warning">
+        <?= sprintf($this->t('Are you sure you want to remove %s from this category?'), $this->user ? $this->escapeHtml($this->user->get('alias')) : $this->t('this user')) ?>
+    </span></p>
+
+    <p class="no-wrap">
+        <a href="<?= $this->url('backend/tournament/participants-remove', ['tpid' => $tpid], ['query' => ['confirmed' => 'true']]) ?>" class="default-button">
+            <span class="symbolic symbolic-cross"><?= $this->t('Yes, remove this participant') ?></span>
+        </a>
+
+        &nbsp;
+
+        <a href="<?= $backUrl ?>" class="default-button"><?= $this->t('No, go back') ?></a>
+    </p>
+</div>

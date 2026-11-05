@@ -72,6 +72,23 @@ class BehaviourForm extends Form
         ));
 
         $this->add(array(
+            'name' => 'cf-tournament',
+            'type' => 'Select',
+            'attributes' => array(
+                'id' => 'cf-tournament',
+                'style' => 'width: 220px;',
+            ),
+            'options' => array(
+                'label' => 'Tournaments',
+                'value_options' => array(
+                    'true' => 'Enabled',
+                    'false' => 'Disabled',
+                ),
+                'notes' => 'Sets if the tournament feature is available to users',
+            ),
+        ));
+
+        $this->add(array(
             'name' => 'cf-activation',
             'type' => 'Select',
             'attributes' => array(
